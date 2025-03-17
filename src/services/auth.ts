@@ -17,19 +17,23 @@ class AuthService {
 
     public async login(email: string, name: string) {
         try{
-            const response = await axiosInstance.post('/auth/login', { email, name });
+            await axiosInstance.post('/auth/login', { email, name });
             this.isAuthenticating = true;
+            return true;
         } catch (error) {
             console.error(error);
+            return false;
         }
 
     }
     public async logout() {
         try {
-            const response = await axiosInstance.post('/logout');
+            await axiosInstance.post('/auth/logout');
             this.isAuthenticating = false;
+            return true;
         } catch (error) {
             console.error(error);
+            return false;
         }
     }
 }

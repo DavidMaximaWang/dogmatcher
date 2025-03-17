@@ -1,20 +1,14 @@
-import { useState } from 'react'
 import './App.css'
 import Home from './components/Home'
 import Login from './components/Login'
+import { useAuth } from './context/AuthContext'
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const handleLogin = () => {
-    setIsLoggedIn(true)
-  }
-  const handleLogout = () => {
-    setIsLoggedIn(false)
-  }
+   const {user} =  useAuth();
 
   return (
     <>
-   {!isLoggedIn ? (<Login handleLogin={handleLogin}/>):(<Home handleLogout={handleLogout}/>)}
+   {!user ? (<Login />):(<Home />)}
     </>
   )
 }

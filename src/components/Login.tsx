@@ -1,8 +1,9 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
 import styles from './Login.module.css';
-import auth from '../services/auth';
 
-function Login({ handleLogin }: { handleLogin: () => void }) {
+function Login() {
+    const {login} = useAuth();
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [error, setError] = React.useState('');
@@ -10,9 +11,8 @@ function Login({ handleLogin }: { handleLogin: () => void }) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log(name, email);
-        auth.login(email, name).then(() => {
+        login(email, name).then(() => {
             setError('');
-            handleLogin();
         });
     };
     return (
