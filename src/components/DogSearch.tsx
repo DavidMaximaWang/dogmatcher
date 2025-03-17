@@ -1,31 +1,15 @@
-import React, { useEffect } from 'react'
-import dog from '../services/dog';
+import styles from './DogSearch.module.css';
+
+import SearchResults from './SearchResults';
+import Sidebar from './Sidebar';
 
 function DogSearch() {
-    const [breeds, setBreeds] = React.useState<string[]>([]);
-    useEffect(() => {
-        const fetchBreeds = async () => {
-
-            try{
-
-            const breedsFetched = await dog.getBreeds();
-                setBreeds(breedsFetched);
-            } catch(error){
-                console.error(error);
-            }
-          }
-
-        fetchBreeds();
-    }, []);
-  return (
-    <div>
-        {
-            breeds.map((breed) => {
-                return <div key={breed}>{breed}</div>
-            })
-        }
-    </div>
-  )
+    return (
+        <div className={styles.container}>
+            <Sidebar />
+            <SearchResults />
+        </div>
+    );
 }
 
-export default DogSearch
+export default DogSearch;
