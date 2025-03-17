@@ -1,0 +1,222 @@
+/* General Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4rem;
+    background-color: #f4f4f4;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.0625rem solid #ccc;
+
+}
+
+.logout-btn {
+    background-color: #e53935;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+    max-width: 6rem;
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Main Container */
+.container {
+
+    display: flex;
+    height: calc(100vh - 4.5rem);
+    margin: 0 auto;
+    margin-top: 4.5rem;
+    justify-content: center;
+    max-width: 80rem;
+    /* Limit max width */
+    overflow: auto;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 18.75rem;
+    /* 300px = 18.75rem */
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-right: 0.0625rem solid #ccc;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    margin-bottom: 1rem;
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    border: 0.0625rem solid #ccc;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+}
+
+.clear-btn,
+.add-favorites-btn {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.clear-btn:hover,
+.add-favorites-btn:hover {
+    background-color: #ccc;
+}
+
+/* Dogs Grid - Three Columns */
+.dogs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 1rem;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* Dog Card */
+.dog-card {
+    height: 24rem;
+    width: 18rem;
+    border: 0.0625rem solid #ccc;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease-in-out;
+    position: relative;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.dog-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.dog-card img {
+    width: 100%;
+    height: 12.5rem;
+    object-fit: cover;
+    flex-grow: 1
+}
+
+.dog-info {
+    padding: 1rem;
+}
+
+.dog-info h3 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.dog-info p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.heart {
+    position: absolute;
+    top: 0.625rem;
+    right: 0.625rem;
+    color: #ccc;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.heart:hover {
+    color: #e53935;
+}
+
+/* Load More Button */
+.load-more {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.load-more button {
+    padding: 0.75rem 1.5rem;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.load-more button:hover {
+    background-color: #1565c0;
+}
+
+/* Responsive Design */
+@media (max-width: 64rem) {
+
+    /* 1024px = 64rem */
+    .dogs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dog-card {
+        width: 16rem;
+        height: 22rem;
+    }
+}
+
+@media (max-width: 48rem) {
+
+    /* 768px = 48rem */
+    .dogs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dog-card {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 30rem) {
+
+    /* 480px = 30rem */
+    .dogs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dog-card img {
+        height: 10rem;
+    }
+}
