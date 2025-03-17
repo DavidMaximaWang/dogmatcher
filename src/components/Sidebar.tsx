@@ -3,6 +3,7 @@ import Select from 'react-select';
 import { useDogs } from '../hooks/useDogQueries';
 import dog from '../services/dog';
 import styles from './Sidebar.module.css';
+import SortBy from './SortBy';
 
 function Sidebar() {
     const result = useDogs({ page: 0, size: 10, sort: 'breed:asc', breeds: ['Affenpinscher'] });
@@ -15,6 +16,7 @@ function Sidebar() {
         value: breed,
         label: breed.charAt(0).toUpperCase() + breed.slice(1) // Capitalize first letter
     }));
+    const sortByOptions = [ ]
 
     const handleChange = (selectedOptions: any) => {
         const values = selectedOptions ? selectedOptions.map((option: any) => option.value) : [];
@@ -36,6 +38,7 @@ function Sidebar() {
     return (
         <aside className={styles.aside}>
             {total && <div> Total dogs found: {total}</div>}
+            <SortBy/>
             <Select options={options} isMulti onChange={handleChange} value={options.filter((option) => selectedBreeds.includes(option.value))} placeholder="Select breeds..." className="breed-select" />
         </aside>
     );
