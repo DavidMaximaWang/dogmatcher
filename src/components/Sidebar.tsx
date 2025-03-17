@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import dog from '../services/dog';
 import Select from 'react-select';
+import dog from '../services/dog';
+import styles from './Sidebar.module.css';
+
 function Sidebar() {
     const [breeds, setBreeds] = React.useState<string[]>([]);
     const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
@@ -29,7 +31,7 @@ function Sidebar() {
         fetchBreeds();
     }, []);
     return (
-        <aside>
+        <aside className={styles.aside}>
             {/* {breeds.map((breed) => {
                 return (
                     <div key={breed}>
@@ -39,7 +41,6 @@ function Sidebar() {
                 );
             })} */}
             <Select options={options} isMulti onChange={handleChange} value={options.filter((option) => selectedBreeds.includes(option.value))} placeholder="Select breeds..." className="breed-select" />
-
         </aside>
     );
 }
