@@ -1,4 +1,5 @@
 import React from 'react'
+import DogSearch from './DogSearch'
 
 function Home({handleLogout}: {handleLogout: () => void}) {
   return (
@@ -9,7 +10,7 @@ function Home({handleLogout}: {handleLogout: () => void}) {
         Logout
       </button>
     </div>
-    <p>Search functionality coming soon...</p>
+    <DogSearch/>
   </div>
   )
 }
