@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
+import { useDogs } from '../hooks/useDogQueries';
 import dog from '../services/dog';
 import styles from './Sidebar.module.css';
 
 function Sidebar() {
+    const result = useDogs({ page: 0, size: 10, sort: 'breed:asc', breeds: ['Affenpinscher'] });
+    const total = result.data?.total;
     const [breeds, setBreeds] = React.useState<string[]>([]);
     const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
 
@@ -32,14 +35,7 @@ function Sidebar() {
     }, []);
     return (
         <aside className={styles.aside}>
-            {/* {breeds.map((breed) => {
-                return (
-                    <div key={breed}>
-                        <input type="checkbox" id={`breed_${breed}`} />
-                        <label for={`breed_${breed}`}>{breed}</label>
-                    </div>
-                );
-            })} */}
+            {total && <div> Total dogs found: {total}</div>}
             <Select options={options} isMulti onChange={handleChange} value={options.filter((option) => selectedBreeds.includes(option.value))} placeholder="Select breeds..." className="breed-select" />
         </aside>
     );
