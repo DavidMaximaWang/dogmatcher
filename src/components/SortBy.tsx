@@ -2,10 +2,11 @@ import { useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 
 import styles from './Sortby.module.css';
+import { useSearchParams } from 'react-router-dom';
 const options = [
-    { value: 'Age', label: 'Age' },
-    { value: 'Breed', label: 'Breed' },
-    { value: 'size', label: 'Size' }
+    { value: 'age', label: 'Age' },
+    { value: 'breed', label: 'Breed' },
+    { value: 'name', label: 'Name' }
 ];
 
 type OptionType = {
@@ -14,18 +15,39 @@ type OptionType = {
 };
 
 function SortBy() {
-    const [selectedOption, setSelectedOption] = useState({ value: 'Breed', label: 'Breed' });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [selectedOption, setSelectedOption] = useState({ value: 'breed', label: 'Breed' });
     const [isAscending, setIsAscending] = useState(true);
 
     const handleSortAsc = () => {
+        const sort = searchParams.get('sort');
+
+        if (sort) {
+            const sortArr = sort.split(':')[1];
+            const newSort = `${selectedOption.value}:${sortArr === 'asc' ? 'desc' : 'asc'}`;
+            searchParams.set('sort', newSort);
+            setSearchParams(searchParams);
+        }
         setIsAscending((prev) => !prev);
     };
     const handleChange = (newValue: SingleValue<OptionType>) => {
+        const sort = searchParams.get('sort');
+
+        if (sort && newValue) {
+            const newSort = `${newValue.value}:${isAscending ? 'asc' : 'desc'}`;
+            searchParams.set('sort', newSort);
+
+            setSearchParams(searchParams);
+        }
         setSelectedOption(newValue);
     };
+
     return (
         <div className={styles.sortByContainer}>
-            <Select defaultValue={selectedOption} onChange={handleChange} options={options} /> <button onClick={handleSortAsc} className={styles.btn}>{isAscending ? '▲' : '▼'}</button>
+            <Select defaultValue={selectedOption} onChange={handleChange} options={options} />{' '}
+            <button onClick={handleSortAsc} className={styles.btn}>
+                {isAscending ? '▲' : '▼'}
+            </button>
         </div>
     );
 }
