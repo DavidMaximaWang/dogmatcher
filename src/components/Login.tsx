@@ -1,18 +1,21 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from './Login.module.css';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
-    const {login} = useAuth();
+    const { login } = useAuth();
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [error, setError] = React.useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log(name, email);
         login(email, name).then(() => {
             setError('');
+            navigate('/');
         });
     };
     return (
