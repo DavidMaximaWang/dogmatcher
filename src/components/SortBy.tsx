@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Select, { SingleValue } from 'react-select';
-
 import styles from './Sortby.module.css';
 import { useSearchParams } from 'react-router-dom';
+
 const options = [
     { value: 'age', label: 'Age' },
     { value: 'breed', label: 'Breed' },
@@ -20,25 +20,16 @@ function SortBy() {
     const [isAscending, setIsAscending] = useState(true);
 
     const handleSortAsc = () => {
-        const sort = searchParams.get('sort');
-
-        if (sort) {
-            const sortArr = sort.split(':')[1];
-            const newSort = `${selectedOption.value}:${sortArr === 'asc' ? 'desc' : 'asc'}`;
-            searchParams.set('sort', newSort);
-            setSearchParams(searchParams);
-        }
+        const newSort = `${selectedOption.value}:${!isAscending ? 'desc' : 'asc'}`;
+        searchParams.set('sort', newSort);
+        setSearchParams(searchParams);
         setIsAscending((prev) => !prev);
     };
     const handleChange = (newValue: SingleValue<OptionType>) => {
-        const sort = searchParams.get('sort');
+        const newSort = `${newValue.value}:${isAscending ? 'asc' : 'desc'}`;
+        searchParams.set('sort', newSort);
 
-        if (sort && newValue) {
-            const newSort = `${newValue.value}:${isAscending ? 'asc' : 'desc'}`;
-            searchParams.set('sort', newSort);
-
-            setSearchParams(searchParams);
-        }
+        setSearchParams(searchParams);
         setSelectedOption(newValue);
     };
 

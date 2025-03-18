@@ -1,5 +1,6 @@
 import { API_LIMITS } from '../config/constants';
-import { Dog } from '../types';
+import { DogResult, SearchDogsParams } from '../hooks/useDogQueries';
+import { Dog, Location } from '../types';
 import axiosInstance from './axios';
 
 class DogService {
@@ -21,20 +22,18 @@ class DogService {
             throw error;
         }
     }
-    public async searchDogs(params: {
-        from: number;
-        size: number;
-        sort: string;
-        breeds: string[],
-        zipCodes: string[],
-        ageMin?: number,
-        ageMax?: number
-    }): Promise<string[]> {
+    public async searchDogs(params: SearchDogsParams): Promise<DogResult> {
         try {
             const queryParams = new URLSearchParams();
-            queryParams.append('size', params.size.toString());
-            queryParams.append('from', (params.from * params.size).toString());
-            queryParams.append('sort', params.sort);
+            if (params.size !== undefined) {
+                queryParams.append('size', params.size.toString());
+            }
+            if (params.from !== undefined) {
+                queryParams.append('from', (params.from * (params.size || 0)).toString());
+            }
+            if (params.sort !== undefined) {
+                queryParams.append('sort', params.sort);
+            }
 
             if (!!params.breeds && !!params.breeds[0]) {
                 params.breeds.forEach((breed) => queryParams.append('breeds', breed));
@@ -44,7 +43,7 @@ class DogService {
                 if (params.zipCodes.length > API_LIMITS.MAX_ZIP_CODES) {
                     throw new Error(`Maximum of ${API_LIMITS.MAX_ZIP_CODES} ZIP codes allowed`);
                 }
-                params.zipCodes.forEach(zipCode => {
+                params.zipCodes.forEach((zipCode) => {
                     queryParams.append('zipCodes', zipCode);
                 });
             }

@@ -1,52 +1,45 @@
 import { useSearchParams } from 'react-router-dom';
-import { useDogDetails, useDogLocations, useDogs } from '../hooks/useDogQueries';
-import DogLocation from './DogLocation';
-import styles from './SearchResults.module.css';
+import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
 import buildDogSearchQuery from '../utils';
+import DogsPage from './DogsPage';
+import styles from './SearchResults.module.css';
 
 
 function SearchResults() {
     const [searchParams] = useSearchParams();
-
-    // const size = Number(searchParams.get('size') || DEFAULT_PARAMS.size);
-    // const from = Number(searchParams.get('from') || DEFAULT_PARAMS.from);
-    // const sort = searchParams.get('sort') || DEFAULT_PARAMS.sort;
-    // const selectedBreeds = (searchParams.get('breeds') || '')?.split(',');
-    // const selectedZipCodes = (searchParams.get('zipCodes') || '')?.split(',').filter(Boolean);
     const dogsQuery = buildDogSearchQuery(searchParams);
-    // console.log('dogsQuery in SearchResults', dogsQuery);
 
-    const { data: result, isLoading } = useDogs(dogsQuery);
-    console.log('result in SearchResults: ',result)
+    const {
+        data,
+        isLoading,
+        isError,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage
+    } = useDogsInfiniteQuery(dogsQuery);
 
-    const { resultIds = [] } = result || {};
-    const { data: dogDetailsArray = [], zipCodes = [] } = useDogDetails(resultIds);
-    console.log('zipCodes in SearchResults: ',zipCodes)
-    const locationsData = useDogLocations(zipCodes);
-
-    if (isLoading || !dogDetailsArray.length) {
+    if (isLoading) {
         return <p className={styles.loading}>Loading dogs...</p>;
     }
+
+    if (isError) {
+        return <p className={styles.error}>Error loading dogs. Please try again.</p>;
+    }
+
     return (
         <div className={styles.dogsGridWrapper}>
             <div className={styles.dogsGrid}>
-                {dogDetailsArray &&
-                    dogDetailsArray.map((dog) => (
-                        <div className={styles.dogCard} key={dog.id}>
-                            <img src={dog.img} alt="Dog" />
-                            <div className={styles.dogInfo}>
-                                <h3>{dog.name}</h3>
-                                <p>Breed: {dog.breed}</p>
-                                <p>Age: {dog.age} years</p>
-                                <DogLocation location={locationsData[dog.zip_code]} />
-                                <span className={styles.heart}>&hearts;</span>
-                            </div>
-                        </div>
-                    ))}
+                {data?.pages.map((page, pageIndex) => (
+                    <DogsPage key={pageIndex} page={page} />
+                ))}
             </div>
-            <div className={styles.loadMore}>
-                <button>Load More</button>
-            </div>
+            {hasNextPage && (
+                <div className={styles.loadMore}>
+                    <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
+                        {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

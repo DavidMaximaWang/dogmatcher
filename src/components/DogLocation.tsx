@@ -1,6 +1,6 @@
 import { Location } from '../types';
 
-function DogLocation({ location }: { location: Location | null }) {
+function DogLocation({ location }: { location: Location | undefined }) {
     if (!location) {
         return null;
     }
