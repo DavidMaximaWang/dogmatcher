@@ -1,49 +1,32 @@
-import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDogDetails, useDogLocations, useDogs } from '../hooks/useDogQueries';
 import DogLocation from './DogLocation';
 import styles from './SearchResults.module.css';
+import buildDogSearchQuery from '../utils';
 
-const DEFAULT_PARAMS = {
-    size: '10',
-    from: '0',
-    sort: 'breed:asc',
-    breeds: 'Malinois'
-};
 
 function SearchResults() {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
 
-    useEffect(() => {
-        if (!searchParams.get('size')) searchParams.set('size', DEFAULT_PARAMS.size);
-        if (!searchParams.get('from')) searchParams.set('from', DEFAULT_PARAMS.from);
-        if (!searchParams.get('sort')) searchParams.set('sort', DEFAULT_PARAMS.sort);
-        if (!searchParams.get('breeds')) searchParams.set('breeds', DEFAULT_PARAMS.breeds);
+    // const size = Number(searchParams.get('size') || DEFAULT_PARAMS.size);
+    // const from = Number(searchParams.get('from') || DEFAULT_PARAMS.from);
+    // const sort = searchParams.get('sort') || DEFAULT_PARAMS.sort;
+    // const selectedBreeds = (searchParams.get('breeds') || '')?.split(',');
+    // const selectedZipCodes = (searchParams.get('zipCodes') || '')?.split(',').filter(Boolean);
+    const dogsQuery = buildDogSearchQuery(searchParams);
+    // console.log('dogsQuery in SearchResults', dogsQuery);
 
-        setSearchParams(searchParams);
-    }, [searchParams, setSearchParams]);
+    const { data: result, isLoading } = useDogs(dogsQuery);
+    console.log('result in SearchResults: ',result)
 
-    const size = Number(searchParams.get('size') || DEFAULT_PARAMS.size);
-    const from = Number(searchParams.get('from') || DEFAULT_PARAMS.from);
-    const sort = searchParams.get('sort') || DEFAULT_PARAMS.sort;
-    const selectedBreeds = (searchParams.get('breeds') || 'Malinois')?.split(',');
-
-    const { data: result, isLoading } = useDogs({
-        page: from,
-        size,
-        sort,
-        breeds: selectedBreeds
-    });
-
-    const { next, resultIds = [] } = result || {};
+    const { resultIds = [] } = result || {};
     const { data: dogDetailsArray = [], zipCodes = [] } = useDogDetails(resultIds);
-
+    console.log('zipCodes in SearchResults: ',zipCodes)
     const locationsData = useDogLocations(zipCodes);
 
-    if (isLoading) {
-        return <p>Loading dogs...</p>;
+    if (isLoading || !dogDetailsArray.length) {
+        return <p className={styles.loading}>Loading dogs...</p>;
     }
-
     return (
         <div className={styles.dogsGridWrapper}>
             <div className={styles.dogsGrid}>

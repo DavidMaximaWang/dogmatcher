@@ -3,17 +3,28 @@ import DogService from '../services/dog';
 import { Dog, Location } from '../types';
 
 interface SearchDogsParams {
-    page: number;
+    from: number;
     size: number;
     sort: string;
-    breeds: string[];
+    breeds?: string[];
+    zipCodes?: string[];
+    ageMin?: number;
+    ageMax?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useDogs = ({ page, size, sort, breeds }: SearchDogsParams): UseQueryResult<any[]> => {
+export const useDogs = ({ from, size, sort, breeds, zipCodes, ageMax, ageMin }: SearchDogsParams): UseQueryResult<any[]> => {
     return useQuery({
-        queryKey: ['dogs', page, size, sort, breeds],
-        queryFn: () => DogService.searchDogs({ page, size, sort, breeds }),
+        queryKey: ['dogs', from, size, sort, breeds, zipCodes, ageMin, ageMax],
+        queryFn: () => DogService.searchDogs({
+            from,
+            size,
+            sort,
+            breeds: breeds || [],
+            zipCodes: zipCodes || [],
+            ageMax,
+            ageMin
+        }),
         retry: 2
     });
 };

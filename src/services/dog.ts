@@ -1,3 +1,4 @@
+import { API_LIMITS } from '../config/constants';
 import { Dog } from '../types';
 import axiosInstance from './axios';
 
@@ -20,18 +21,44 @@ class DogService {
             throw error;
         }
     }
-    public async searchDogs(params: { page: number; size: number; sort: string; breeds: string[] }): Promise<string[]> {
+    public async searchDogs(params: {
+        from: number;
+        size: number;
+        sort: string;
+        breeds: string[],
+        zipCodes: string[],
+        ageMin?: number,
+        ageMax?: number
+    }): Promise<string[]> {
         try {
             const queryParams = new URLSearchParams();
             queryParams.append('size', params.size.toString());
-            queryParams.append('from', (params.page * params.size).toString());
+            queryParams.append('from', (params.from * params.size).toString());
             queryParams.append('sort', params.sort);
 
-            if (params.breeds.length > 0) {
+            if (!!params.breeds && !!params.breeds[0]) {
                 params.breeds.forEach((breed) => queryParams.append('breeds', breed));
             }
 
-            const response = await axiosInstance.get(`/dogs/search?${queryParams.toString()}`);
+            if (!!params.zipCodes && !!params.zipCodes[0]) {
+                if (params.zipCodes.length > API_LIMITS.MAX_ZIP_CODES) {
+                    throw new Error(`Maximum of ${API_LIMITS.MAX_ZIP_CODES} ZIP codes allowed`);
+                }
+                params.zipCodes.forEach(zipCode => {
+                    queryParams.append('zipCodes', zipCode);
+                });
+            }
+
+            if (params.ageMin !== undefined) {
+                queryParams.append('ageMin', params.ageMin.toString());
+            }
+
+            if (params.ageMax !== undefined) {
+                queryParams.append('ageMax', params.ageMax.toString());
+            }
+
+            const queryString = queryParams.toString();
+            const response = await axiosInstance.get(`/dogs/search${queryString ? `?${queryString}` : ''}`);
 
             return response.data;
         } catch (error) {
