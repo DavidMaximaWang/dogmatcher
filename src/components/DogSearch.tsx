@@ -1,13 +1,13 @@
-import DogsLocationContextProvider from '../context/DogsLocationContextProvider';
+import DogsContextProvider from '../context/DogsContextProvider';
 import SearchResults from './SearchResults';
 import Sidebar from './Sidebar';
 
 function DogSearch() {
     return (
-        <DogsLocationContextProvider>
+        <DogsContextProvider>
             <Sidebar />
             <SearchResults />
-        </DogsLocationContextProvider>
+        </DogsContextProvider>
     );
 }
 

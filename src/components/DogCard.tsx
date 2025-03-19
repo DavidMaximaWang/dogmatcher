@@ -1,4 +1,4 @@
-import { useDogLocationsContext } from '../context/DogsLocationContext';
+import { useDogLocationsContext } from '../context/DogsContext';
 import styles from '../styles/DogsCard.module.css';
 import DogLocation from './DogLocation';
 

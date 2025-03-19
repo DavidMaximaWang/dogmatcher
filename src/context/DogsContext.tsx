@@ -9,10 +9,10 @@ export type DogsLocationsContextType = {
     toggleSelectDog: (id: string) => void;
 };
 
-export const DogsLocationContext = createContext<DogsLocationsContextType | undefined>(undefined);
+export const DogsContext = createContext<DogsLocationsContextType | undefined>(undefined);
 
 export const useDogLocationsContext = () => {
-    const context = useContext(DogsLocationContext);
+    const context = useContext(DogsContext);
 
     if (context === undefined) {
         throw new Error('No context provided');

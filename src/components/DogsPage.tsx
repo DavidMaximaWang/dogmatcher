@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDogLocationsContext } from '../context/DogsLocationContext';
+import { useDogLocationsContext } from '../context/DogsContext';
 import { DogResult, useDogsQueryWithDetailsByIds } from '../hooks/useDogQueries';
 import DogCard from './DogCard';
 

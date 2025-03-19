@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Select, { MultiValue } from 'react-select';
-import { useDogLocationsContext } from '../context/DogsLocationContext';
+import { useDogLocationsContext } from '../context/DogsContext';
 import { useDogsQuery } from '../hooks/useDogQueries';
 import dog from '../services/dog';
 import styles from '../styles/Sidebar.module.css';

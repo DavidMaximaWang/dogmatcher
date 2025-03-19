@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import styles from '../styles/DogsLocationProvider.module.css';
-import { DogsLocationContext } from './DogsLocationContext';
+import { DogsContext } from './DogsContext';
 import { Location } from '../types';
 
 import { isEqual } from 'lodash';
@@ -9,7 +9,7 @@ import { getSearchParamsWithoutZipCodes } from '../utils';
 
 type Props = { children: ReactNode };
 
-export default function DogsLocationContextProvider({ children }: Props) {
+export default function DogsContextProvider({ children }: Props) {
     const [locations, setLocations] = useState<Record<string, Location>>({});
     const [searchParams] = useSearchParams();
     const searchParamString = getSearchParamsWithoutZipCodes(searchParams);
@@ -65,7 +65,7 @@ export default function DogsLocationContextProvider({ children }: Props) {
 
     return (
         <div className={styles.container}>
-            <DogsLocationContext.Provider value={value}>{children}</DogsLocationContext.Provider>;
+            <DogsContext.Provider value={value}>{children}</DogsContext.Provider>;
         </div>
     );
 }
