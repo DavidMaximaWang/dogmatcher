@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Select, { MultiValue } from 'react-select';
 import { useDogLocationsContext } from '../context/DogsLocationContext';
-import { useAvailableLocationsQuery, useDogsQuery, useDogsQueryWithDetails } from '../hooks/useDogQueries';
+import { useDogsQuery } from '../hooks/useDogQueries';
 import dog from '../services/dog';
 import styles from '../styles/Sidebar.module.css';
 import { Location } from '../types';
@@ -19,8 +19,7 @@ interface DogSearchResponse {
 }
 
 function Sidebar() {
-    // return <div>bbb</div>
-    const {locations} =useDogLocationsContext();
+    const {locations} = useDogLocationsContext();
     console.log('locations', locations)
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedBreeds = searchParams.get('breeds')?.split(',') || [];
@@ -66,14 +65,7 @@ function Sidebar() {
         fetchBreeds();
     }, []);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {zipCodes, ...rest} = dogSearchQuery;
-
-    const dogsResultsWithDetails = useDogsQueryWithDetails({...rest, zipCodes: []})
-    const locationsData1 = dogsResultsWithDetails.data.locationsData;
-    // const ddde =  useAvailableLocationsQuery({...rest});
-    // console.log('dddedddeee', ddde);
-    const allAvailableZipCodes = Object.values(locationsData1);
+    const allAvailableZipCodes = Object.values(locations);
 
     const selectedLocations = allAvailableZipCodes.filter((location) => selectedZipCodes.includes(location.zip_code));
 

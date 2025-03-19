@@ -1,13 +1,26 @@
+import { useEffect } from 'react';
+import { useDogLocationsContext } from '../context/DogsLocationContext';
 import { DogResult, useDogsQueryWithDetailsByIds } from '../hooks/useDogQueries';
-import DogLocation from './DogLocation';
 import styles from '../styles/DogsPage.module.css';
+import DogLocation from './DogLocation';
 
-function DogsPage({ page }: { page: DogResult }) {
+function DogsPage({ page, isLastPage, isFirstPage }: { page: DogResult, isLastPage: boolean, isFirstPage: boolean }) {
+    const {addLocations, initAddLocations} = useDogLocationsContext()
     const { resultIds } = page;
     const { data, isLoading } = useDogsQueryWithDetailsByIds(resultIds);
+    useEffect(() => {
+        if (isFirstPage && data.locationsData && Object.keys(data.locationsData).length) {
+            initAddLocations(data.locationsData);
+        }
+        if (isLastPage && !isFirstPage && data.locationsData && Object.keys(data.locationsData).length) {
+            addLocations(data.locationsData);
+        }
+
+    }, [addLocations, initAddLocations, data.locationsData, isLastPage, isFirstPage]);
     if (isLoading) {
         return <p>Loading dogs...</p>;
     }
+
     return (
         <>
             {data.dogDetailsArray.map((dog) => {

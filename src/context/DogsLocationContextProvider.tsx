@@ -1,29 +1,58 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import styles from '../styles/DogsLocationProvider.module.css';
 import { DogsLocationContext } from './DogsLocationContext';
 import { Location } from '../types';
 
+import { isEqual } from 'lodash';
+import { useSearchParams } from 'react-router-dom';
+import { getSearchParamsWithoutZipCodes } from '../utils';
+
 type Props = { children: ReactNode };
 
 export default function DogsLocationContextProvider({ children }: Props) {
-    const [locations, setLocations] = useState<Set<Location>>(new Set());
+    const [locations, setLocations] = useState<Record<string, Location>>({});
+    const [searchParams] = useSearchParams();
+    const searchParamString = getSearchParamsWithoutZipCodes(searchParams);
+    const prevSearchParamString = useRef<string>(searchParamString);
 
-    const addLocations = (newLocations: Location[]) => {
-        setLocations((prevLocations) => {
-          const updatedLocations = new Set(prevLocations);
-          newLocations.forEach((location) => {
-            updatedLocations.add(location);
-          });
-          return updatedLocations;
-        });
-      };
+    const addLocations = useCallback(
+        (newLocations: Record<string, Location>) => {
+            const keys1 = Object.keys(locations);
+            const keys2 = Object.keys({ ...locations, ...newLocations });
+
+            const areKeysEqual = isEqual([...keys1].sort(), [...keys2].sort());
+            if (!areKeysEqual) {
+                setLocations((prevLocations) => ({ ...prevLocations, ...newLocations }));
+            }
+        },
+        [locations]
+    );
+
+    const initAddLocations = useCallback(
+        (newLocations: Record<string, Location>) => {
+            if (Object.keys(locations).length && prevSearchParamString.current === searchParamString) {
+                return;
+            }
+            const keys1 = Object.keys(locations);
+            const keys2 = Object.keys(newLocations);
+
+            const areKeysEqual = isEqual([...keys1].sort(), [...keys2].sort());
+
+            if (!areKeysEqual) {
+                setLocations((prevLocations) => ({ ...prevLocations, ...newLocations }));
+            }
+            prevSearchParamString.current = searchParamString;
+        },
+        [locations, searchParamString]
+    );
 
       const value = useMemo(
         () => ({
           locations,
           addLocations,
+          initAddLocations
         }),
-        [locations]
+        [locations, addLocations, initAddLocations]
       );
 
     // const context = { locations, addLocations };

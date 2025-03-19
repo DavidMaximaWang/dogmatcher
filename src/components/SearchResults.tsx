@@ -1,8 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
 import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
+import styles from '../styles/SearchResults.module.css';
 import buildDogSearchQuery from '../utils';
 import DogsPage from './DogsPage';
-import styles from '../styles/SearchResults.module.css';
 
 
 function SearchResults() {
@@ -35,7 +35,7 @@ function SearchResults() {
         <div className={styles.dogsGridWrapper}>
             <div className={styles.dogsGrid}>
                 {data?.pages.map((page, pageIndex) => (
-                    <DogsPage key={pageIndex} page={page} />
+                    <DogsPage key={pageIndex} page={page} isLastPage={pageIndex === data.pages.length - 1} isFirstPage={pageIndex === 0}/>
                 ))}
             </div>
             <div className={styles.loadMore}>

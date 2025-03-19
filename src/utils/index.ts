@@ -18,3 +18,23 @@ const buildDogSearchQuery = (searchParams: URLSearchParams) => {
 }
 
 export default buildDogSearchQuery;
+
+const getSearchParamsWithoutZipCodes = (searchParams: URLSearchParams) => {
+    const newSearchParams = new URLSearchParams();
+
+    [...searchParams.keys()].sort().forEach((key) => {
+        if (key !== 'zipCodes') {
+            searchParams
+                .getAll(key)
+                .sort()
+                .forEach((value) => {
+                    const newSortedValue = value.split(',').sort().join(',')
+                    newSearchParams.append(key, newSortedValue);
+                });
+        }
+    });
+
+    return newSearchParams.toString();
+};
+
+export { getSearchParamsWithoutZipCodes };

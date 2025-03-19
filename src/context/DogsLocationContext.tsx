@@ -2,8 +2,9 @@ import { createContext, useContext } from 'react';
 import { Location } from '../types';
 
 export type DogsLocationsContextType = {
-    locations: Set<Location>;
-    addLocations: any;
+    locations: Record<string, Location>;
+    addLocations: (newlocations: Record<string, Location>) => void;
+    initAddLocations: (newlocations: Record<string, Location>) => void;
 };
 
 export const DogsLocationContext = createContext<DogsLocationsContextType | undefined>(undefined);
