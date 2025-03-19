@@ -26,6 +26,11 @@ function SearchResults() {
         return <p className={styles.error}>Error loading dogs. Please try again.</p>;
     }
 
+    const handleLoadMore = () => {
+        fetchNextPage();
+
+    }
+
     return (
         <div className={styles.dogsGridWrapper}>
             <div className={styles.dogsGrid}>
@@ -33,13 +38,11 @@ function SearchResults() {
                     <DogsPage key={pageIndex} page={page} />
                 ))}
             </div>
-            {hasNextPage && (
-                <div className={styles.loadMore}>
-                    <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-                        {isFetchingNextPage ? 'Loading more...' : 'Load More'}
-                    </button>
-                </div>
-            )}
+            <div className={styles.loadMore}>
+                <button onClick={handleLoadMore} disabled={isFetchingNextPage || !hasNextPage}>
+                    {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+                </button>
+            </div>
         </div>
     );
 }

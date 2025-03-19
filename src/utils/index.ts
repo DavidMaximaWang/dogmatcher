@@ -1,10 +1,5 @@
-const DEFAULT_PARAMS = {
-    size: 10,
-    from: 0,
-    sort: 'breed:asc',
-    breeds: '',
-    zipCodes: ''
-};
+
+import { DEFAULT_PARAMS } from "../config/constants";
 
 const buildDogSearchQuery = (searchParams: URLSearchParams) => {
     const queryParameters = Object.fromEntries(searchParams.entries());

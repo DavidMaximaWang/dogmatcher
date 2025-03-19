@@ -1,7 +1,9 @@
-import { API_LIMITS } from '../config/constants';
+import { API_CONFIG, API_LIMITS } from '../config/constants';
 import { DogResult, SearchDogsParams } from '../hooks/useDogQueries';
 import { Dog, Location } from '../types';
 import axiosInstance from './axios';
+
+const {DOGS_SEARCH, DOGS, BREEDS, LOCATIONS} = API_CONFIG.ENDPOINTS
 
 class DogService {
     private static instance: DogService;
@@ -15,7 +17,7 @@ class DogService {
 
     public async getBreeds() {
         try {
-            const response = await axiosInstance.get('/dogs/breeds');
+            const response = await axiosInstance.get(BREEDS);
             return response.data;
         } catch (error) {
             console.error(error);
@@ -29,7 +31,7 @@ class DogService {
                 queryParams.append('size', params.size.toString());
             }
             if (params.from !== undefined) {
-                queryParams.append('from', (params.from * (params.size || 0)).toString());
+                queryParams.append('from', params.from.toString());
             }
             if (params.sort !== undefined) {
                 queryParams.append('sort', params.sort);
@@ -57,7 +59,7 @@ class DogService {
             }
 
             const queryString = queryParams.toString();
-            const response = await axiosInstance.get(`/dogs/search${queryString ? `?${queryString}` : ''}`);
+            const response = await axiosInstance.get(`${DOGS_SEARCH}${queryString ? `?${queryString}` : ''}`);
 
             return response.data;
         } catch (error) {
@@ -68,7 +70,7 @@ class DogService {
 
     public async getDogs(dogIds: string[]): Promise<Dog[]> {
         try {
-            const response = await axiosInstance.post('/dogs', dogIds);
+            const response = await axiosInstance.post(DOGS, dogIds);
             return response.data;
         } catch (error) {
             console.error('Error fetching dogs:', error);
@@ -78,7 +80,7 @@ class DogService {
 
     public async getDogLocations(zipCodes: string[]): Promise<Location[]> {
         try {
-            const response = await axiosInstance.post('/locations', zipCodes);
+            const response = await axiosInstance.post(LOCATIONS, zipCodes);
             return response.data;
         } catch (error) {
             console.error('Error fetching dogs:', error);

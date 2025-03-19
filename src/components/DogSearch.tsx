@@ -1,13 +1,13 @@
-import styles from '../styles/DogSearch.module.css';
+import DogsLocationContextProvider from '../context/DogsLocationContextProvider';
 import SearchResults from './SearchResults';
 import Sidebar from './Sidebar';
 
 function DogSearch() {
     return (
-        <div className={styles.container}>
+        <DogsLocationContextProvider>
             <Sidebar />
             <SearchResults />
-        </div>
+        </DogsLocationContextProvider>
     );
 }
 

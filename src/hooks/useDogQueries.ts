@@ -19,6 +19,7 @@ export interface DogResult {
 }
 
 export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMax, ageMin }: SearchDogsParams) => {
+    console.log('frommmm:,' , from)
     return useInfiniteQuery({
         queryKey: ['dogs', size, sort, breeds, zipCodes, ageMin, ageMax],
         queryFn: async ({ pageParam = 0 }) => {
@@ -33,14 +34,18 @@ export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMa
             });
             return result;
         },
-        getNextPageParam: (lastPage: DogResult) => {
+        getNextPageParam: (lastPage: DogResult, allPages) => {
+            console.log('allpages:: ',allPages)
             if (lastPage?.next) {
+                console.log('lastPage?.nextlastPage?.nextlastPage?.next', lastPage?.next)
                 const params = new URLSearchParams(lastPage.next.split('?')[1]);
-                return params.get('from') ? Number(params.get('from')) : undefined;
+                const abc = params.get('from') ? Number(params.get('from')) : undefined
+                console.log('abcccccc::::', abc)
+                return abc;
             }
             return undefined;
         },
-        initialPageParam: from ?? 0,
+        initialPageParam: from ? Number(from) : 0,
         retry: 2
     });
 };
@@ -141,3 +146,53 @@ export const useDogsQueryWithDetailsByIds = (resultIds: string[]) => {
 
     return { data, isLoading };
 };
+
+export const useDogsInfiniteQuery1 = ({ from, size, sort, breeds, ageMax, ageMin }: Omit<SearchDogsParams, 'zipCodes'>) => {
+    return useInfiniteQuery({
+        queryKey: ['dogs', size, sort, breeds, ageMin, ageMax],
+        queryFn: async ({ pageParam = 0 }) => {
+            const result = await DogService.searchDogs({
+                from: pageParam,
+                size: size || 20,
+                sort,
+                breeds,
+                ageMax,
+                ageMin
+            });
+            return result;
+        },
+        getNextPageParam: (lastPage: DogResult) => {
+            if (lastPage?.next) {
+                const params = new URLSearchParams(lastPage.next.split('?')[1]);
+                return params.get('from') ? Number(params.get('from')) : undefined;
+            }
+            return undefined;
+        },
+        initialPageParam: from ?? 0,
+        retry: 2
+    });
+};
+
+export const useAvailableLocationsQuery = (allParams: Omit<SearchDogsParams, 'zipCodes'>) => {
+    const { data: pageData, isLoading: isDogsLoading } = useDogsInfiniteQuery1(allParams);
+
+    const resultIds = useMemo(() => {
+        return (pageData && pageData.pages && pageData.pages.map((page) => page.resultIds)) || [];
+    }, [pageData]);
+    const aa = resultIds.slice(-1)?.[0] || [];
+    const { zipCodes = [] } = useDogDetails(aa);
+
+    const { isLoading: isLocationsLoading, locations: locationsData = {} } = useDogLocations(zipCodes);
+
+    const data = useMemo(
+        () => ({
+            zipCodes,
+            locationsData
+        }),
+        [zipCodes, locationsData]
+    );
+
+    const isLoading = isDogsLoading || isLocationsLoading;
+
+    return { data, isLoading };
+}
