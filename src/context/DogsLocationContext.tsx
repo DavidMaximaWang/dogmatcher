@@ -5,6 +5,8 @@ export type DogsLocationsContextType = {
     locations: Record<string, Location>;
     addLocations: (newlocations: Record<string, Location>) => void;
     initAddLocations: (newlocations: Record<string, Location>) => void;
+    selectedDogIds: string[];
+    toggleSelectDog: (id: string) => void;
 };
 
 export const DogsLocationContext = createContext<DogsLocationsContextType | undefined>(undefined);

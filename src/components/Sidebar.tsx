@@ -8,6 +8,7 @@ import styles from '../styles/Sidebar.module.css';
 import { Location } from '../types';
 import buildDogSearchQuery from '../utils';
 import SortBy from './SortBy';
+import FavoriteDog from './FavoriteDog';
 
 interface BreedOption {
     value: string;
@@ -19,7 +20,7 @@ interface DogSearchResponse {
 }
 
 function Sidebar() {
-    const {locations} = useDogLocationsContext();
+    const { locations} = useDogLocationsContext();
     console.log('locations', locations)
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedBreeds = searchParams.get('breeds')?.split(',') || [];
@@ -125,6 +126,7 @@ function Sidebar() {
 
     return (
         <aside className={styles.aside}>
+            <FavoriteDog />
             {total && <div>Total dogs found: {total}</div>}
             <SortBy />
 

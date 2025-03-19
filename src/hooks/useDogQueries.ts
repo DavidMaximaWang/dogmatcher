@@ -1,6 +1,6 @@
-import { useQuery, UseQueryResult, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult, useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import DogService from '../services/dog';
-import { Dog, Location } from '../types';
+import { Dog, Location, Match } from '../types';
 import { useMemo } from 'react';
 
 export interface SearchDogsParams {
@@ -64,6 +64,12 @@ export const useDogsQuery = ({ from, size, sort, breeds, zipCodes, ageMax, ageMi
                 ageMin
             }),
         retry: 2
+    });
+};
+
+export const useMatchDogs = () => {
+    return useMutation<Match, Error, string[]>({
+        mutationFn: (favoriteIds) => DogService.getMatch(favoriteIds)
     });
 };
 

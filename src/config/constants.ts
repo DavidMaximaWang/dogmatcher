@@ -19,5 +19,6 @@ export const API_CONFIG = {
         DOGS: '/dogs',
         BREEDS: '/dogs/breeds',
         LOCATIONS: '/locations',
+        DOG_MATCH: '/dogs/match'
     }
 } as const;

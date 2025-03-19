@@ -28,7 +28,6 @@ function SearchResults() {
 
     const handleLoadMore = () => {
         fetchNextPage();
-
     }
 
     return (

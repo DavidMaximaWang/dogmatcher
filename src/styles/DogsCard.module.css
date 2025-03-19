@@ -52,3 +52,7 @@
 .heart:hover {
     color: tomato
 }
+
+.heart.selected {
+    color: red
+}

@@ -14,6 +14,7 @@ export default function DogsLocationContextProvider({ children }: Props) {
     const [searchParams] = useSearchParams();
     const searchParamString = getSearchParamsWithoutZipCodes(searchParams);
     const prevSearchParamString = useRef<string>(searchParamString);
+    const [selectedDogIds, setSelectedDogIds] = useState<string[]>([]);
 
     const addLocations = useCallback(
         (newLocations: Record<string, Location>) => {
@@ -45,14 +46,19 @@ export default function DogsLocationContextProvider({ children }: Props) {
         },
         [locations, searchParamString]
     );
+    const toggleSelectDog = useCallback((id: string) => {
+        setSelectedDogIds((prev) => (prev.includes(id) ? prev.filter((dogId) => dogId !== id) : [...prev, id]));
+    }, []);
 
       const value = useMemo(
         () => ({
           locations,
           addLocations,
-          initAddLocations
+          initAddLocations,
+          selectedDogIds,
+          toggleSelectDog,
         }),
-        [locations, addLocations, initAddLocations]
+        [locations, addLocations, initAddLocations, selectedDogIds, toggleSelectDog]
       );
 
     // const context = { locations, addLocations };

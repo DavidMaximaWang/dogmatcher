@@ -1,9 +1,9 @@
 import { API_CONFIG, API_LIMITS } from '../config/constants';
 import { DogResult, SearchDogsParams } from '../hooks/useDogQueries';
-import { Dog, Location } from '../types';
+import { Dog, Location, Match } from '../types';
 import axiosInstance from './axios';
 
-const {DOGS_SEARCH, DOGS, BREEDS, LOCATIONS} = API_CONFIG.ENDPOINTS
+const {DOGS_SEARCH, DOGS, BREEDS, LOCATIONS, DOG_MATCH} = API_CONFIG.ENDPOINTS
 
 class DogService {
     private static instance: DogService;
@@ -70,10 +70,24 @@ class DogService {
 
     public async getDogs(dogIds: string[]): Promise<Dog[]> {
         try {
+            if (dogIds.length === 0) {
+                return [];
+            }
             const response = await axiosInstance.post(DOGS, dogIds);
             return response.data;
         } catch (error) {
             console.error('Error fetching dogs:', error);
+            throw error;
+        }
+    }
+
+
+    public async getMatch(favoriteIds: string[]): Promise<Match> {
+        try {
+            const response = await axiosInstance.post(DOG_MATCH, favoriteIds);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get match:', error);
             throw error;
         }
     }
