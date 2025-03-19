@@ -5,7 +5,7 @@ import { useDogsQuery, useDogsQueryWithDetails } from '../hooks/useDogQueries';
 import dog from '../services/dog';
 import { Location } from '../types';
 import buildDogSearchQuery from '../utils';
-import styles from './Sidebar.module.css';
+import styles from '../styles/Sidebar.module.css';
 import SortBy from './SortBy';
 
 interface BreedOption {

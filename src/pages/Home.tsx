@@ -1,4 +1,4 @@
-import DogSearch from './DogSearch';
+import DogSearch from '../components/DogSearch';
 
 function Home() {
     return (

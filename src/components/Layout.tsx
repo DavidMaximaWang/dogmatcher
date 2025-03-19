@@ -1,6 +1,6 @@
 import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import styles from './Layout.module.css';
+import styles from '../styles/Layout.module.css';
 
 const Layout = () => {
     const { logout } = useAuth();

@@ -1,10 +1,10 @@
-import { DogResult, useDogsQueryWithDetails1 } from '../hooks/useDogQueries';
+import { DogResult, useDogsQueryWithDetailsByIds } from '../hooks/useDogQueries';
 import DogLocation from './DogLocation';
-import styles from './DogsPage.module.css';
+import styles from '../styles/DogsPage.module.css';
 
 function DogsPage({ page }: { page: DogResult }) {
     const { resultIds } = page;
-    const { data, isLoading } = useDogsQueryWithDetails1(resultIds);
+    const { data, isLoading } = useDogsQueryWithDetailsByIds(resultIds);
     if (isLoading) {
         return <p>Loading dogs...</p>;
     }

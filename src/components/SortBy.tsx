@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Select, { SingleValue } from 'react-select';
-import styles from './Sortby.module.css';
+import styles from '../styles/Sortby.module.css';
 import { useSearchParams } from 'react-router-dom';
 
 const options = [

@@ -1,4 +1,4 @@
-import styles from './DogSearch.module.css';
+import styles from '../styles/DogSearch.module.css';
 import SearchResults from './SearchResults';
 import Sidebar from './Sidebar';
 

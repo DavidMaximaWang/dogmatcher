@@ -121,7 +121,7 @@ export const useDogsQueryWithDetails = (query: SearchDogsParams) => {
 };
 
 
-export const useDogsQueryWithDetails1 = (resultIds: string[]) => {
+export const useDogsQueryWithDetailsByIds = (resultIds: string[]) => {
 
     const { data: dogDetailsArray = [], zipCodes = [] } = useDogDetails(resultIds);
 

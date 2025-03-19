@@ -2,7 +2,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
 import buildDogSearchQuery from '../utils';
 import DogsPage from './DogsPage';
-import styles from './SearchResults.module.css';
+import styles from '../styles/SearchResults.module.css';
 
 
 function SearchResults() {
