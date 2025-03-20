@@ -11,6 +11,7 @@ type Props = { children: ReactNode };
 
 export default function DogsContextProvider({ children }: Props) {
     const [locations, setLocations] = useState<Record<string, Location>>({});
+    const [total, setTotal] = useState<number|undefined>(undefined);
     const [searchParams] = useSearchParams();
     const searchParamString = getSearchParamsWithoutZipCodes(searchParams);
     const prevSearchParamString = useRef<string>(searchParamString);
@@ -57,8 +58,10 @@ export default function DogsContextProvider({ children }: Props) {
           initAddLocations,
           selectedDogIds,
           toggleSelectDog,
+          total,
+          setTotal
         }),
-        [locations, addLocations, initAddLocations, selectedDogIds, toggleSelectDog]
+        [locations, addLocations, initAddLocations, selectedDogIds, toggleSelectDog, total, setTotal]
       );
 
     // const context = { locations, addLocations };

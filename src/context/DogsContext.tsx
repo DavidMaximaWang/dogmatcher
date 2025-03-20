@@ -7,11 +7,13 @@ export type DogsLocationsContextType = {
     initAddLocations: (newlocations: Record<string, Location>) => void;
     selectedDogIds: string[];
     toggleSelectDog: (id: string) => void;
+    total: number | undefined;
+    setTotal: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
 export const DogsContext = createContext<DogsLocationsContextType | undefined>(undefined);
 
-export const useDogLocationsContext = () => {
+export const useDogContext = () => {
     const context = useContext(DogsContext);
 
     if (context === undefined) {

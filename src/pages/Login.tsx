@@ -12,7 +12,6 @@ function Login() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(name, email);
         login(email, name).then(() => {
             setError('');
             navigate('/');

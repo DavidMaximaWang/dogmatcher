@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useDogLocationsContext } from '../context/DogsContext';
+import { useDogContext } from '../context/DogsContext';
 import { DogResult, useDogsQueryWithDetailsByIds } from '../hooks/useDogQueries';
 import DogCard from './DogCard';
 
 function DogsPage({ page, isLastPage, isFirstPage }: { page: DogResult, isLastPage: boolean, isFirstPage: boolean }) {
-    const {addLocations, initAddLocations} = useDogLocationsContext()
+    const {addLocations, initAddLocations} = useDogContext()
     const { resultIds } = page;
     const { data, isLoading } = useDogsQueryWithDetailsByIds(resultIds);
     useEffect(() => {

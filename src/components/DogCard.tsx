@@ -1,10 +1,10 @@
-import { useDogLocationsContext } from '../context/DogsContext';
+import { useDogContext } from '../context/DogsContext';
 import styles from '../styles/DogsCard.module.css';
 import { Dog, Location } from '../types';
 import DogLocation from './DogLocation';
 
 function DogCard({ dog, location }: {dog: Dog, location: Location | undefined}) {
-    const {selectedDogIds ,toggleSelectDog } = useDogLocationsContext();
+    const {selectedDogIds ,toggleSelectDog } = useDogContext();
     const handleToggleSelectedDog = () => toggleSelectDog(dog.id);
     const isDogSelected = selectedDogIds.includes(dog.id);
 

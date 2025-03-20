@@ -6,9 +6,11 @@ import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
 import styles from '../styles/SearchResults.module.css';
 import buildDogSearchQuery from '../utils';
 import DogsPage from './DogsPage';
+import { useDogContext } from '../context/DogsContext';
 
 
 function SearchResults() {
+    const {setTotal} = useDogContext();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const dogsQuery = buildDogSearchQuery(searchParams);
@@ -34,6 +36,9 @@ function SearchResults() {
             navigate('/login');
         }
       }, [error, navigate]);
+
+        setTotal(data?.pages[0].total)
+
 
       const debouncedFetchNextPage = useDebounce(fetchNextPage, 1000);
 

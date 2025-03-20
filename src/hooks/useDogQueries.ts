@@ -20,9 +20,11 @@ export interface DogResult {
 
 export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMax, ageMin }: SearchDogsParams) => {
     console.log('frommmm:,' , from)
+    console.trace();
     return useInfiniteQuery({
         queryKey: ['dogs', size, sort, breeds, zipCodes, ageMin, ageMax],
         queryFn: async ({ pageParam = 0 }) => {
+            try{
             const result = await DogService.searchDogs({
                 from: pageParam,
                 size: size || 20,
@@ -33,15 +35,16 @@ export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMa
                 ageMin
             });
             return result;
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+        }
+
         },
-        getNextPageParam: (lastPage: DogResult, allPages) => {
-            console.log('allpages:: ',allPages)
+        getNextPageParam: (lastPage: DogResult) => {
             if (lastPage?.next) {
-                console.log('lastPage?.nextlastPage?.nextlastPage?.next', lastPage?.next)
                 const params = new URLSearchParams(lastPage.next.split('?')[1]);
-                const abc = params.get('from') ? Number(params.get('from')) : undefined
-                console.log('abcccccc::::', abc)
-                return abc;
+                return params.get('from') ? Number(params.get('from')) : undefined
             }
             return undefined;
         },

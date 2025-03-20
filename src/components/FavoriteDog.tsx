@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useDogLocationsContext } from '../context/DogsContext';
+import { useDogContext } from '../context/DogsContext';
 import { useDogDetails, useDogLocations, useMatchDogs } from '../hooks/useDogQueries';
 import DogCard from './DogCard';
 
 const FavoriteDog = () => {
-    const { selectedDogIds } = useDogLocationsContext();
+    const { selectedDogIds } = useDogContext();
     const [matchedDogId, setMatchedDog] = useState<string | undefined>(undefined);
 
     const dogsMutation = useMatchDogs();
