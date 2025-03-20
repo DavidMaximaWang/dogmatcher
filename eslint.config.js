@@ -3,6 +3,7 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
+import * as tsparser from '@typescript-eslint/parser';
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -23,6 +24,22 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
+  },
+  {
+    files: [
+      '**/__tests__/**/*.{js,jsx,ts,tsx}',
+      '**/*.{test,spec}.{js,jsx,ts,tsx}'
+    ],
+    languageOptions: {
+      parser: tsparser,
+      sourceType: 'module',
+      ecmaVersion: 2021,
+    },
+    rules: {
+      'no-var': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 )
