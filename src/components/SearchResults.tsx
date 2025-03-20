@@ -1,11 +1,14 @@
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
 import styles from '../styles/SearchResults.module.css';
 import buildDogSearchQuery from '../utils';
 import DogsPage from './DogsPage';
+import { useEffect } from 'react';
+import { AxiosError } from 'axios';
 
 
 function SearchResults() {
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const dogsQuery = buildDogSearchQuery(searchParams);
 
@@ -13,16 +16,30 @@ function SearchResults() {
         data,
         isLoading,
         isError,
+        error,
         hasNextPage,
         fetchNextPage,
         isFetchingNextPage
     } = useDogsInfiniteQuery(dogsQuery);
+
+    useEffect(() => {
+        if (!error) {
+            return;
+        }
+        const axiosError = error as AxiosError;
+
+        if (axiosError?.status === 401) {
+            console.error('Unauthorized - Redirecting to login...');
+            navigate('/login');
+        }
+      }, [error, navigate]);
 
     if (isLoading) {
         return <p className={styles.loading}>Loading dogs...</p>;
     }
 
     if (isError) {
+
         return <p className={styles.error}>Error loading dogs. Please try again.</p>;
     }
 
