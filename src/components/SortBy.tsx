@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Select, { SingleValue } from 'react-select';
-import styles from '../styles/Sortby.module.css';
+import styles from '../styles/SortBy.module.css';
 import { useSearchParams } from 'react-router-dom';
 
 const options = [
@@ -26,6 +26,9 @@ function SortBy() {
         setIsAscending((prev) => !prev);
     };
     const handleChange = (newValue: SingleValue<OptionType>) => {
+        if (!newValue) {
+            return;
+        }
         const newSort = `${newValue.value}:${isAscending ? 'asc' : 'desc'}`;
         searchParams.set('sort', newSort);
 

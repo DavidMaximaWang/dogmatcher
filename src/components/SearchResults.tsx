@@ -1,11 +1,11 @@
+import { AxiosError } from 'axios';
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDebounce } from '../hooks';
 import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
 import styles from '../styles/SearchResults.module.css';
 import buildDogSearchQuery from '../utils';
 import DogsPage from './DogsPage';
-import { useCallback, useEffect } from 'react';
-import { AxiosError } from 'axios';
-import { useDebounce } from '../hooks';
 
 
 function SearchResults() {
