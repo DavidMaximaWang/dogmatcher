@@ -20,7 +20,7 @@ function SortBy() {
     const [isAscending, setIsAscending] = useState(true);
 
     const handleSortAsc = () => {
-        const newSort = `${selectedOption.value}:${!isAscending ? 'desc' : 'asc'}`;
+        const newSort = `${selectedOption.value}:${isAscending ? 'desc' : 'asc'}`;
         searchParams.set('sort', newSort);
         setSearchParams(searchParams);
         setIsAscending((prev) => !prev);

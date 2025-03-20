@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDebounce } from '../hooks';
 import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
@@ -13,7 +13,7 @@ function SearchResults() {
     const {setTotal} = useDogContext();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const dogsQuery = buildDogSearchQuery(searchParams);
+    const dogsQuery = useMemo(() => buildDogSearchQuery(searchParams), [searchParams]);
 
     const {
         data,
