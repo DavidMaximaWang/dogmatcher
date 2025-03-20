@@ -9,6 +9,7 @@ import { Location } from '../types';
 import buildDogSearchQuery from '../utils';
 import SortBy from './SortBy';
 import FavoriteDog from './FavoriteDog';
+import AgeFilter from './AgeFilter';
 
 interface BreedOption {
     value: string;
@@ -23,8 +24,6 @@ function Sidebar() {
     const { locations} = useDogLocationsContext();
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedBreeds = searchParams.get('breeds')?.split(',') || [];
-    const ageMin = searchParams.get('ageMin') ? parseInt(searchParams.get('ageMin')!) : undefined;
-    const ageMax = searchParams.get('ageMax') ? parseInt(searchParams.get('ageMax')!) : undefined;
 
     const [selectedZipCodes, setSelectedZipCodes] = useState<string[]>([]);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -103,26 +102,6 @@ function Sidebar() {
         setIsMenuOpen(false);
     };
 
-    const handleAgeMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value ? parseInt(e.target.value) : undefined;
-        if (value !== undefined) {
-            searchParams.set('ageMin', value.toString());
-        } else {
-            searchParams.delete('ageMin');
-        }
-        setSearchParams(searchParams);
-    };
-
-    const handleAgeMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value ? parseInt(e.target.value) : undefined;
-        if (value !== undefined) {
-            searchParams.set('ageMax', value.toString());
-        } else {
-            searchParams.delete('ageMax');
-        }
-        setSearchParams(searchParams);
-    };
-
     return (
         <aside className={styles.aside}>
             <FavoriteDog />
@@ -130,21 +109,7 @@ function Sidebar() {
             <SortBy />
 
             <div className={styles.filterSection}>
-                <label>Age Range:</label>
-                <div className={styles.ageInputs}>
-                    <input
-                        type="number"
-                        placeholder="Min Age"
-                        value={ageMin || ''}
-                        onChange={handleAgeMinChange}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Max Age"
-                        value={ageMax || ''}
-                        onChange={handleAgeMaxChange}
-                    />
-                </div>
+                <AgeFilter/>
             </div>
 
             <Select

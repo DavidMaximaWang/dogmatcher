@@ -1,0 +1,18 @@
+
+.ageInputs {
+    display: flex;
+    gap: 1rem;
+}
+
+.ageInputs input {
+    width: 100px;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.ageInputs span {
+    display: inline-block;
+    vertical-align: middle;
+    margin: auto;
+}

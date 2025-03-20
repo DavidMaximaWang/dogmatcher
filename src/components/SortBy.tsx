@@ -38,7 +38,7 @@ function SortBy() {
 
     return (
         <div className={styles.sortByContainer}>
-            <Select defaultValue={selectedOption} onChange={handleChange} options={options} />{' '}
+            <Select defaultValue={selectedOption} onChange={handleChange} options={options} className={styles.select}/>{' '}
             <button onClick={handleSortAsc} className={styles.btn}>
                 {isAscending ? '▲' : '▼'}
             </button>

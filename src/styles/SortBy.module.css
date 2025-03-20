@@ -1,12 +1,14 @@
 .sortByContainer{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     margin-top: 20px;
 }
-
+.select {
+    width: 10rem;
+}
 .btn {
-    margin-left: 1rem;
+    margin-left: auto;
     border: none;
     background-color: lightblue;
     padding: 10px 24px;
