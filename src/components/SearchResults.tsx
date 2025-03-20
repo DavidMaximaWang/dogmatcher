@@ -3,8 +3,9 @@ import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
 import styles from '../styles/SearchResults.module.css';
 import buildDogSearchQuery from '../utils';
 import DogsPage from './DogsPage';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { AxiosError } from 'axios';
+import { useDebounce } from '../hooks';
 
 
 function SearchResults() {
@@ -34,6 +35,8 @@ function SearchResults() {
         }
       }, [error, navigate]);
 
+      const debouncedFetchNextPage = useDebounce(fetchNextPage, 1000);
+
     if (isLoading) {
         return <p className={styles.loading}>Loading dogs...</p>;
     }
@@ -43,9 +46,7 @@ function SearchResults() {
         return <p className={styles.error}>Error loading dogs. Please try again.</p>;
     }
 
-    const handleLoadMore = () => {
-        fetchNextPage();
-    }
+    const handleLoadMore = () => debouncedFetchNextPage();
 
     return (
         <div className={styles.dogsGridWrapper}>

@@ -21,7 +21,6 @@ interface DogSearchResponse {
 
 function Sidebar() {
     const { locations} = useDogLocationsContext();
-    console.log('locations', locations)
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedBreeds = searchParams.get('breeds')?.split(',') || [];
     const ageMin = searchParams.get('ageMin') ? parseInt(searchParams.get('ageMin')!) : undefined;
