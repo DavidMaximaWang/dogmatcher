@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(false);
         }
     };
+    // throw new Error();
 
     return (
         <AuthContext.Provider value={{ user, login, logout }}>
