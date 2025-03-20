@@ -38,7 +38,17 @@ function BreedFilter() {
         setSearchParams(searchParams);
     };
 
-    return <Select isMulti options={breedOptions} onChange={handleBreedChange} value={breedOptions.filter((option) => selectedBreeds.includes(option.value))} placeholder="Select breeds..." className="breed-select" />;
+    return (
+    <Select
+        isMulti
+        options={breedOptions}
+        onChange={handleBreedChange}
+        value={breedOptions.filter((option) => selectedBreeds?.includes(option.value))}
+        placeholder="Select breeds..."
+        className="select-breed-dropdown"
+        isClearable
+        getOptionValue={(option) => option.value}
+    />);
 }
 
 export default BreedFilter;

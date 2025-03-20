@@ -51,18 +51,18 @@ function LocationFilter() {
     };
     return (
         <Select
-        isMulti
-        options={allAvailableZipCodes}
-        value={selectedLocations}
-        onChange={handleLocationChange}
-        getOptionLabel={(option) => `${option.city} (${option.zip_code})`}
-        getOptionValue={(option) => option.zip_code}
-        placeholder="Select a location..."
-        isClearable
-        isSearchable
-        onMenuOpen={handleLocationMenuOpen}
-        onMenuClose={handleLocationMenuClose}
-        closeMenuOnSelect={false}
+            isMulti
+            options={allAvailableZipCodes}
+            value={selectedLocations}
+            onChange={handleLocationChange}
+            getOptionLabel={(option) => `${option.city} (${option.zip_code})`}
+            getOptionValue={(option) => option.zip_code}
+            placeholder="Select a location..."
+            isClearable
+            isSearchable
+            onMenuOpen={handleLocationMenuOpen}
+            onMenuClose={handleLocationMenuClose}
+            closeMenuOnSelect={false}
     />);
 }
 

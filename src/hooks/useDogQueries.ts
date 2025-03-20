@@ -19,8 +19,6 @@ export interface DogResult {
 }
 
 export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMax, ageMin }: SearchDogsParams) => {
-    console.log('frommmm:,' , from)
-    console.trace();
     return useInfiniteQuery({
         queryKey: ['dogs', size, sort, breeds, zipCodes, ageMin, ageMax],
         queryFn: async ({ pageParam = 0 }) => {

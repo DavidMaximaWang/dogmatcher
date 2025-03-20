@@ -10,8 +10,8 @@ function Sidebar() {
     const {total} = useDogContext()
     return (
         <aside className={styles.aside}>
-            <FavoriteDog />
             {total && <div>Total dogs found: {total}</div>}
+            <FavoriteDog />
             <SortBy />
             <div className={styles.filterSection}>
                 <AgeFilter />

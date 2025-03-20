@@ -6,6 +6,7 @@ import DogCard from './DogCard';
 const FavoriteDog = () => {
     const { selectedDogIds } = useDogContext();
     const [matchedDogId, setMatchedDog] = useState<string | undefined>(undefined);
+    const [error, setError] = useState<Error | null>(null)
 
     const dogsMutation = useMatchDogs();
 
@@ -22,9 +23,11 @@ const FavoriteDog = () => {
         dogsMutation.mutate(selectedDogIds, {
             onSuccess: (matchedDog) => {
                 setMatchedDog(matchedDog.match);
+                setError(null);
             },
             onError: (error) => {
                 console.error('Failed to match:', error);
+                setError(error);
             }
         });
     };
@@ -32,9 +35,9 @@ const FavoriteDog = () => {
     return (
         <div className={'container'}>
             <button onClick={handleClick} disabled={dogsMutation.isPending || selectedDogIds.length === 0 || isFetchingDetails || isMatchedDogLocationLoading}>
-                Get Your Favorite Dog
+                {selectedDogIds.length === 0 ? 'Please favorite dogs on the right' : dogsMutation.isPending || isFetchingDetails || isMatchedDogLocationLoading ? 'Mathing in progress' : `Get Your Favorite Dog`}
             </button>
-            {dog ? <DogCard dog={dog[0]} location={getMatchedDogLocation()} /> : <></>}
+            {dog ? <DogCard dog={dog[0]} location={getMatchedDogLocation()} /> : error ? <div>{error.message}</div> : <></>}
         </div>
     );
 };
