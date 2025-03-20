@@ -40,3 +40,21 @@
 .loading {
     width: 100%;
 }
+
+@media (min-width: 1200px) {
+    .dogsGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+    .dogsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .dogsGrid {
+        grid-template-columns: 1fr;
+    }
+}

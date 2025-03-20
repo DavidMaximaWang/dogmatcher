@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
-import styles from '../styles/DogsLocationProvider.module.css';
+import styles from '../styles/DogsContexProvider.module.css';
 import { DogsContext } from './DogsContext';
 import { Location } from '../types';
 
