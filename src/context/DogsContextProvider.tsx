@@ -68,7 +68,7 @@ export default function DogsContextProvider({ children }: Props) {
 
     return (
         <div className={styles.container}>
-            <DogsContext.Provider value={value}>{children}</DogsContext.Provider>;
+            <DogsContext.Provider value={value}>{children}</DogsContext.Provider>
         </div>
     );
 }

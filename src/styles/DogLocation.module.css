@@ -1,0 +1,24 @@
+.locationRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.locationOnly {
+    padding: 4px 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.locationRow label {
+    cursor: pointer;
+}
+
+.locationOnly:hover {
+    background-color: #0056b3;
+}

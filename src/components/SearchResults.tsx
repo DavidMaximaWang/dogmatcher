@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDebounce } from '../hooks';
 import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
@@ -37,7 +37,13 @@ function SearchResults() {
         }
       }, [error, navigate]);
 
-        setTotal(data?.pages[0].total)
+      const setTotalValue = useCallback((value: number) => setTotal(value), [setTotal]);
+
+      useEffect(() => {
+          if (data) {
+              setTotalValue(data.pages[0].total);
+          }
+      }, [data, setTotalValue]);
 
 
       const debouncedFetchNextPage = useDebounce(fetchNextPage, 1000);

@@ -37,7 +37,7 @@ const FavoriteDog = () => {
             <button onClick={handleClick} disabled={dogsMutation.isPending || selectedDogIds.length === 0 || isFetchingDetails || isMatchedDogLocationLoading}>
                 {selectedDogIds.length === 0 ? 'Please favorite dogs on the right' : dogsMutation.isPending || isFetchingDetails || isMatchedDogLocationLoading ? 'Mathing in progress' : `Get Your Favorite Dog`}
             </button>
-            {dog ? <DogCard dog={dog[0]} location={getMatchedDogLocation()} /> : error ? <div>{error.message}</div> : <></>}
+            {dog ? <DogCard dog={dog[0]} favoritedDog={true} location={getMatchedDogLocation()} /> : error ? <div>{error.message}</div> : <></>}
         </div>
     );
 };

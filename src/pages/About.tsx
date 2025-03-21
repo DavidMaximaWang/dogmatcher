@@ -6,7 +6,6 @@ const About = () => {
                 <a href="https://github.com/davidmaximawang" target="_blank" rel="noopener noreferrer">
                     GitHub
                 </a>
-                .
             </p>
             <p>
                 {' '}
