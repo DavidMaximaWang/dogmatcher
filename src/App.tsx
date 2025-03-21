@@ -5,26 +5,32 @@ import Login from './pages/Login';
 import { useAuth } from './context/AuthContext';
 import About from './pages/About';
 import Layout from './components/Layout';
+import DogDetailsPage from './components/DogDetailsPage';
+import DogsContextProvider from './context/DogsContextProvider';
 
 function App() {
     const { user } = useAuth();
 
     return (
-        <Routes>
-            <Route path="/login" element={<Login />} />
+        <>
             {!user ? (
-                <>
+                <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="*" element={<Navigate to="/login" replace />} />
-                </>
+                </Routes>
             ) : (
-                <Route element={<Layout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Route>
+                <DogsContextProvider>
+                    <Routes>
+                        <Route element={<Layout />}>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/about" element={<About />} />
+                            <Route path="/dogs/:id" element={<DogDetailsPage />} />
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Route>
+                    </Routes>
+                </DogsContextProvider>
             )}
-        </Routes>
+        </>
     );
 }
 

@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, SetStateAction, useContext } from 'react';
 import { Location } from '../types';
 
 export type DogsLocationsContextType = {
@@ -9,6 +9,8 @@ export type DogsLocationsContextType = {
     toggleSelectDog: (id: string) => void;
     total: number | undefined;
     setTotal: React.Dispatch<React.SetStateAction<number | undefined>>;
+    searchResultLoaded?: boolean;
+    setSearchResultLoadedCallback: React.Dispatch<SetStateAction<boolean | undefined>>;
 };
 
 export const DogsContext = createContext<DogsLocationsContextType | undefined>(undefined);
@@ -22,4 +24,3 @@ export const useDogContext = () => {
 
     return context;
 };
-

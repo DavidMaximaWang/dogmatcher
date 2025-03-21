@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
-import styles from '../styles/DogsContexProvider.module.css';
+// import styles from '../styles/DogsContexProvider.module.css';
 import { DogsContext } from './DogsContext';
 import { Location } from '../types';
 
@@ -16,6 +16,7 @@ export default function DogsContextProvider({ children }: Props) {
     const searchParamString = getSearchParamsWithoutZipCodes(searchParams);
     const prevSearchParamString = useRef<string>(searchParamString);
     const [selectedDogIds, setSelectedDogIds] = useState<string[]>([]);
+    const [searchResultLoaded, setSearchResultLoaded] = useState<boolean | undefined>(false);
 
     const addLocations = useCallback(
         (newLocations: Record<string, Location>) => {
@@ -51,6 +52,10 @@ export default function DogsContextProvider({ children }: Props) {
         setSelectedDogIds((prev) => (prev.includes(id) ? prev.filter((dogId) => dogId !== id) : [...prev, id]));
     }, []);
 
+    const setSearchResultLoadedCallback = useCallback<React.Dispatch<React.SetStateAction<boolean | undefined>>>((searchResultLoaded) => {
+        setSearchResultLoaded(searchResultLoaded);
+    }, []);
+
       const value = useMemo(
         () => ({
           locations,
@@ -59,16 +64,16 @@ export default function DogsContextProvider({ children }: Props) {
           selectedDogIds,
           toggleSelectDog,
           total,
-          setTotal
+          setTotal,
+          searchResultLoaded,
+          setSearchResultLoadedCallback
         }),
-        [locations, addLocations, initAddLocations, selectedDogIds, toggleSelectDog, total, setTotal]
+        [locations, addLocations, initAddLocations, selectedDogIds, toggleSelectDog, total, setTotal, searchResultLoaded, setSearchResultLoadedCallback]
       );
 
     // const context = { locations, addLocations };
 
     return (
-        <div className={styles.container}>
-            <DogsContext.Provider value={value}>{children}</DogsContext.Provider>
-        </div>
+        <DogsContext.Provider value={value}>{children}</DogsContext.Provider>
     );
 }

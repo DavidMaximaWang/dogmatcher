@@ -17,8 +17,16 @@
 
 .locationRow label {
     cursor: pointer;
+    width: 100%;
+    text-align: center;
 }
 
 .locationOnly:hover {
     background-color: #0056b3;
+}
+
+p {
+    cursor: default;
+    width: 100%;
+    text-align: center;
 }

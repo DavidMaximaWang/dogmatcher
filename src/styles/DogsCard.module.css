@@ -56,3 +56,11 @@
 .heart.selected {
     color: red
 }
+
+.breeds {
+    cursor: pointer;
+}
+
+.breeds:hover {
+    background-color: #ccc;
+}

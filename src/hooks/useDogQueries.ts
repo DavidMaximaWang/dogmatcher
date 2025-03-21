@@ -136,7 +136,7 @@ export const useDogsQueryWithDetails = (query: SearchDogsParams) => {
 };
 
 export const useDogsQueryWithDetailsByIds = (resultIds: string[]) => {
-    const { data: dogDetailsArray = [], zipCodes = [] } = useDogDetails(resultIds);
+    const { data: dogDetailsArray = [], zipCodes = [], isPending } = useDogDetails(resultIds);
 
     const { isLoading: isLocationsLoading, locations: locationsData = {} } = useDogLocations(zipCodes);
 
@@ -150,7 +150,7 @@ export const useDogsQueryWithDetailsByIds = (resultIds: string[]) => {
         [resultIds, dogDetailsArray, zipCodes, locationsData]
     );
 
-    const isLoading = isLocationsLoading;
+    const isLoading = isLocationsLoading || isPending;
 
     return { data, isLoading };
 };

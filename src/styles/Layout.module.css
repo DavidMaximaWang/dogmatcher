@@ -30,7 +30,7 @@
 .mainContent {
     margin: 4rem 12rem 0 12rem;
     height: calc(100vh - 4rem);
-    overflow: hidden;
+    overflow: auto;
 }
 
 

@@ -1,0 +1,42 @@
+.dogDetail{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.detailsLocation {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    display: inline-block;
+    user-select: none;
+}
+
+.detailsLocation:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detailsLocation:active {
+    background-color: #e9e9e9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) inset;
+    transform: translateY(1px);
+}
+
+.detailsLocation:focus {
+    outline: 2px solid #4caf50;
+}
+
+
+.hideDog {
+    display: none;
+}
