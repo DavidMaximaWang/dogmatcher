@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Layout.module.css';
 
@@ -10,12 +10,22 @@ const Layout = () => {
             <header className={styles.header}>
                 <h2>Find your perfect dog</h2>
                 <nav className={styles.nav}>
-                    <Link to="/" className={styles.navLink}>
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) =>
+                            `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
+                        }
+                    >
                         Home
-                    </Link>
-                    <Link to="/about" className={styles.navLink}>
+                    </NavLink>
+                    <NavLink
+                        to="/about"
+                        className={({ isActive }) =>
+                            `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
+                        }
+                    >
                         About
-                    </Link>
+                    </NavLink>
                 </nav>
                 <button onClick={logout} className={styles.logoutButton}>
                     Logout
