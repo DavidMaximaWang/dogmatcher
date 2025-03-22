@@ -22,6 +22,7 @@ export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMa
     const fetchDogs = useCallback(
         async ({ pageParam = 0 }: { pageParam: number }) => {
             try {
+                // throw new Error('fake')
                 const result = await DogService.searchDogs({
                     from: pageParam,
                     size: size || 20,

@@ -1,17 +1,15 @@
-import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useDogContext } from '../context/DogsContext';
 import { useDebounce } from '../hooks';
 import { useDogsInfiniteQuery } from '../hooks/useDogQueries';
 import styles from '../styles/SearchResults.module.css';
 import buildDogSearchQuery from '../utils';
 import DogsPage from './DogsPage';
-import { useDogContext } from '../context/DogsContext';
 
 
 function SearchResults() {
     const {total, setTotal, setSearchResultLoadedCallback} = useDogContext();
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const dogsQuery = useMemo(() => buildDogSearchQuery(searchParams), [searchParams]);
     const { id: dogId } = useParams<{ id: string }>();
@@ -21,23 +19,10 @@ function SearchResults() {
         data,
         isLoading,
         isError,
-        error,
         hasNextPage,
         fetchNextPage,
         isFetchingNextPage
     } = useDogsInfiniteQuery(dogsQuery);
-
-    useEffect(() => {
-        if (!error) {
-            return;
-        }
-        const axiosError = error as AxiosError;
-
-        if (axiosError?.status === 401) {
-            console.error('Unauthorized - Redirecting to login...');
-            navigate('/login');
-        }
-      }, [error, navigate]);
 
       const setTotalValue = useCallback((value: number | undefined) => setTotal(value), [setTotal]);
 
@@ -58,6 +43,9 @@ function SearchResults() {
 
       const debouncedFetchNextPage = useDebounce(fetchNextPage, 1000);
 
+    if (total === 0) {
+        return <p> No more dogs found! </p>;
+    }
     if (isLoading) {
         return <p className={styles.loading}>Loading dogs...</p>;
     }
@@ -80,7 +68,7 @@ function SearchResults() {
             </div>
             <div className={styles.loadMore}>
                 <button onClick={handleLoadMore} disabled={isFetchingNextPage || !hasNextPage}>
-                    {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+                    {isFetchingNextPage ? 'Loading more...' : !hasNextPage? 'No more dogs' : 'Load More'}
                 </button>
             </div>
         </div>
