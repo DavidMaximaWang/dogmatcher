@@ -1,71 +1,61 @@
-import { Query, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthService from "../services/auth";
+// src/contexts/AuthContext.tsx
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase/firebase'; // your Firebase config
+import { useQueryClient, Query } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 interface AuthContextType {
-    user: boolean;
-    login: (email: string, name: string) => Promise<void>;
+    user: User | null;
+    login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<boolean>(false);
+    const [user, setUser] = useState<User | null>(null);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            setUser(firebaseUser);
+        });
+        return () => unsubscribe();
+    }, []);
+
     useEffect(() => {
         const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
             if (event?.type === 'updated' && (event.query as Query)?.state?.status === 'error') {
                 const error = (event.query as Query)?.state?.error as AxiosError;
-                if (error) {
-                    queryClient.clear();
-                    navigate('/login');
-                }
-                if (error?.response?.status === 401 /*  && !hasRedirected */) {
-                    console.error('Unauthorized - Redirecting to login...');
+                if (error?.response?.status === 401) {
                     queryClient.clear();
                     navigate('/login');
                 }
             }
         });
-
-        return () => {
-            unsubscribe();
-        };
+        return () => unsubscribe();
     }, [navigate, queryClient]);
 
-    const login = async (email: string, name: string) => {
-        const success = await AuthService.login(email, name);
-
-        if (success) {
-            setUser(true);
-        }
+    const login = async (email: string, password: string) => {
+        await signInWithEmailAndPassword(auth, email, password);
+        // setUser is auto-handled by onAuthStateChanged
     };
 
     const logout = async () => {
-        const success = await AuthService.logout();
-        if (success) {
-            setUser(false);
-        }
+        await signOut(auth);
+        setUser(null); // optional: immediate update
     };
-    // throw new Error();
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 };
 
-
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
+        throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
 };
