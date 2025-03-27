@@ -16,6 +16,7 @@ export interface DogResult {
     next?: string;
     resultIds: string[];
     total: number;
+    prev?: string;
 }
 
 export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMax, ageMin }: SearchDogsParams) => {
