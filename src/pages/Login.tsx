@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Login.module.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
     const { login } = useAuth();
@@ -40,6 +40,9 @@ function Login() {
                     </button>
                     {error && <p className={styles.error}>{error}</p>}
                 </form>
+                <p className={styles.registerLink}>
+                    Don’t have an account? <Link to="/register">Register here</Link>
+                </p>
             </div>
         </div>
     );
