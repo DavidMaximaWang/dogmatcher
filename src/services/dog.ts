@@ -1,9 +1,7 @@
-import { API_CONFIG, API_LIMITS } from '../config/constants';
+import { collection, documentId, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../firebase/config';
 import { DogResult, SearchDogsParams } from '../hooks/useDogQueries';
 import { Dog, Location, Match } from '../types';
-import axiosInstance from './axios';
-
-const {DOGS_SEARCH, DOGS, BREEDS, LOCATIONS, DOG_MATCH} = API_CONFIG.ENDPOINTS
 
 class DogService {
     private static instance: DogService;
@@ -14,92 +12,137 @@ class DogService {
         }
         return DogService.instance;
     }
+    private allDogs: Dog[] = [];
+    private hasLoaded = false;
 
-    public async getBreeds() {
-        try {
-            const response = await axiosInstance.get(BREEDS);
-            return response.data;
-        } catch (error) {
-            console.error(error);
-            throw error;
+    private async loadDogsIfNeeded() {
+        if (!this.hasLoaded) {
+            const snapshot = await getDocs(collection(db, 'dogs'));
+            this.allDogs = snapshot.docs.map((doc) => doc.data() as Dog);
+            this.hasLoaded = true;
         }
     }
+
+    public async getAllDogs(): Promise<Dog[]> {
+        await this.loadDogsIfNeeded();
+        return this.allDogs;
+    }
+    public async getBreeds(): Promise<string[]> {
+        const snapshot = await getDocs(collection(db, 'dogs'));
+        const breedsSet = new Set<string>();
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.breed) breedsSet.add(data.breed);
+        });
+        return Array.from(breedsSet);
+    }
+
     public async searchDogs(params: SearchDogsParams): Promise<DogResult> {
-        try {
-            const queryParams = new URLSearchParams();
-            if (params.size !== undefined) {
-                queryParams.append('size', params.size.toString());
-            }
-            if (params.from !== undefined) {
-                queryParams.append('from', params.from.toString());
-            }
-            if (params.sort !== undefined) {
-                queryParams.append('sort', params.sort);
-            }
+        let dogs = await this.getAllDogs();
 
-            if (!!params.breeds && !!params.breeds[0]) {
-                params.breeds.forEach((breed) => queryParams.append('breeds', breed));
-            }
-
-            if (!!params.zipCodes && !!params.zipCodes[0]) {
-                if (params.zipCodes.length > API_LIMITS.MAX_ZIP_CODES) {
-                    throw new Error(`Maximum of ${API_LIMITS.MAX_ZIP_CODES} ZIP codes allowed`);
-                }
-                params.zipCodes.forEach((zipCode) => {
-                    queryParams.append('zipCodes', zipCode);
-                });
-            }
-
-            if (params.ageMin !== undefined) {
-                queryParams.append('ageMin', params.ageMin.toString());
-            }
-
-            if (params.ageMax !== undefined) {
-                queryParams.append('ageMax', params.ageMax.toString());
-            }
-
-            const queryString = queryParams.toString();
-            const response = await axiosInstance.get(`${DOGS_SEARCH}${queryString ? `?${queryString}` : ''}`);
-
-            return response.data;
-        } catch (error) {
-            console.error('Error searching dogs:', error);
-            throw error;
+        // Filter
+        if (params.breeds?.length) {
+            dogs = dogs.filter((d) => params.breeds!.includes(d.breed));
         }
+        if (params.zipCodes?.length) {
+            dogs = dogs.filter((d) => params.zipCodes!.includes(d.zip_code));
+        }
+        if (params.ageMin !== undefined) {
+            dogs = dogs.filter((d) => (params.ageMin ? d.age >= params.ageMin : true));
+        }
+        if (params.ageMax !== undefined) {
+            dogs = dogs.filter((d) => (params.ageMax ? d.age <= params.ageMax : true));
+        }
+
+        // Sort
+        if (params.sort) {
+            const [field, direction] = params.sort.split(':');
+            dogs.sort((a, b) => {
+                const valA = a[field as keyof Dog];
+                const valB = b[field as keyof Dog];
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return direction === 'desc' ? valB.localeCompare(valA) : valA.localeCompare(valB);
+                }
+                if (typeof valA === 'number' && typeof valB === 'number') {
+                    return direction === 'desc' ? valB - valA : valA - valB;
+                }
+                return 0;
+            });
+        }
+
+        // Pagination
+        const total = dogs.length;
+        const from = params.from || 0;
+        const size = params.size || 24;
+        const paged = dogs.slice(from, from + size);
+
+        // Build query string for next/prev
+        const buildQueryString = (fromVal: number) => {
+            const query = new URLSearchParams();
+            query.append('from', fromVal.toString());
+            query.append('size', size.toString());
+            if (params.sort) query.append('sort', params.sort);
+            if (params.breeds) params.breeds.forEach((b) => query.append('breeds', b));
+            if (params.zipCodes) params.zipCodes.forEach((z) => query.append('zipCodes', z));
+            if (params.ageMin !== undefined) query.append('ageMin', params.ageMin.toString());
+            if (params.ageMax !== undefined) query.append('ageMax', params.ageMax.toString());
+            return `/dogs/search?${query.toString()}`;
+        };
+
+        return {
+            resultIds: paged.map((d) => d.id),
+            total,
+            next: from + size < total ? buildQueryString(from + size) : undefined,
+            prev: from > 0 ? buildQueryString(Math.max(0, from - size)) : undefined
+        };
     }
 
     public async getDogs(dogIds: string[]): Promise<Dog[]> {
-        try {
-            if (dogIds.length === 0) {
-                return [];
-            }
-            const response = await axiosInstance.post(DOGS, dogIds);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching dogs:', error);
-            throw error;
+        if (dogIds.length === 0) return [];
+
+        // Firestore can handle up to 10 `in` values per query, so we batch if needed
+        const batches: string[][] = [];
+        const dogIdsDup = [...dogIds];
+        while (dogIdsDup.length) {
+            batches.push(dogIdsDup.splice(0, 10));
         }
+
+        const dogs: Dog[] = [];
+
+        for (const batch of batches) {
+            const q = query(collection(db, 'dogs'), where(documentId(), 'in', batch));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                dogs.push(doc.data() as Dog);
+            });
+        }
+
+        return dogs;
     }
 
-
     public async getMatch(favoriteIds: string[]): Promise<Match> {
-        try {
-            const response = await axiosInstance.post(DOG_MATCH, favoriteIds);
-            return response.data;
-        } catch (error) {
-            console.error('Failed to get match:', error);
-            throw error;
-        }
+        const match = favoriteIds[Math.floor(Math.random() * favoriteIds.length)];
+        return { match };
     }
 
     public async getDogLocations(zipCodes: string[]): Promise<Location[]> {
-        try {
-            const response = await axiosInstance.post(LOCATIONS, zipCodes);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching dogs:', error);
-            throw error;
+        if (zipCodes.length === 0) return [];
+
+        const batches: string[][] = [];
+        const zipCodesDup = [...zipCodes];
+        while (zipCodesDup.length) {
+            batches.push(zipCodesDup.splice(0, 10));
         }
+
+        const locations: Location[] = [];
+
+        for (const batch of batches) {
+            const q = query(collection(db, 'locations'), where('zip_code', 'in', batch));
+            const snapshot = await getDocs(q);
+            snapshot.forEach((doc) => locations.push(doc.data() as Location));
+        }
+
+        return locations;
     }
 }
 

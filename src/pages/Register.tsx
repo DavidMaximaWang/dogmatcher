@@ -3,8 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Login.module.css';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
-    const { login } = useAuth();
+function Register() {
+    const { register } = useAuth();
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState('');
@@ -13,18 +13,18 @@ function Login() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await login(email, password);
+            await register(email, password);
             setError('');
-            navigate('/', { replace: true });
+            navigate('/'); // or navigate('/login') if you want login after registration
         } catch (err: any) {
-            setError(err.message || 'Login failed');
+            setError(err.message || 'Failed to register');
         }
     };
 
     return (
         <div className={styles.container}>
             <div className={styles.login}>
-                <h1>Login</h1>
+                <h1>Register</h1>
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.inputGroup}>
                         <label htmlFor="email">Email</label>
@@ -34,9 +34,8 @@ function Login() {
                         <label htmlFor="password">Password</label>
                         <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     </div>
-
                     <button type="submit" className={styles.button}>
-                        Login
+                        Register
                     </button>
                     {error && <p className={styles.error}>{error}</p>}
                 </form>
@@ -45,4 +44,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Register;

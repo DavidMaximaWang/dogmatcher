@@ -7,6 +7,7 @@ import DogsContextProvider from './context/DogsContextProvider';
 import About from './pages/About';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
     const { user } = useAuth();
@@ -15,6 +16,7 @@ function App() {
         <DogsContextProvider>
             <Routes>
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 {user ? (
                     <Route element={<Layout />}>
                         <Route path="/" element={<Home />} />
