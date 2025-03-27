@@ -16,11 +16,13 @@ type OptionType = {
 
 function SortBy() {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [selectedOption, setSelectedOption] = useState({ value: 'breed', label: 'Breed' });
-    const [isAscending, setIsAscending] = useState(true);
+    const sortFromParams = searchParams.get('sort');
+    const [sortKey, sortOrder] = sortFromParams ? sortFromParams.split(":") : ["breed", "asc"];
+    const [selectedOption, setSelectedOption] = useState(options.find(v=> v.value === sortKey));
+    const [isAscending, setIsAscending] = useState(sortOrder === 'asc');
 
     const handleSortAsc = () => {
-        const newSort = `${selectedOption.value}:${isAscending ? 'desc' : 'asc'}`;
+        const newSort = selectedOption ? `${selectedOption.value}:${isAscending ? 'desc' : 'asc'}` : '';
         searchParams.set('sort', newSort);
         setSearchParams(searchParams);
         setIsAscending((prev) => !prev);
