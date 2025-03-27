@@ -9,6 +9,8 @@ function DogCard({ dog, location, favoritedDog }: {dog: Dog, location: Location 
     const {selectedDogIds ,toggleSelectDog } = useDogContext();
     const handleToggleSelectedDog = () => toggleSelectDog(dog.id);
     const isDogSelected = selectedDogIds.includes(dog.id);
+    const zipCodes = searchParams.get('zipCodes');
+    const query = zipCodes ? `?zipCodes=${encodeURIComponent(zipCodes)}` : '';
 
     const handleBreedSelect = () => {
         searchParams.set('breeds', dog.breed);
@@ -17,7 +19,7 @@ function DogCard({ dog, location, favoritedDog }: {dog: Dog, location: Location 
 
     return (
         <div className={styles.dogCard} key={dog.id}>
-            <Link to={`/dogs/${dog.id}`}>
+            <Link to={`/dogs/${dog.id}${query}`}>
                 <img src={dog.img} alt="Dog" loading='lazy'/>
             </Link>
             <div className={styles.dogInfo}>
