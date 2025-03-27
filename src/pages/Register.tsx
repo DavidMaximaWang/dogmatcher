@@ -1,7 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import EmailVerificationNotice from '../components/EmailVerificationNotice';
 import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Login.module.css';
-import { useNavigate, Link } from 'react-router-dom';
+
 
 function Register() {
     const { register } = useAuth();
@@ -9,9 +11,10 @@ function Register() {
     const [password, setPassword] = React.useState('');
     const [confirmPassword, setConfirmPassword] = React.useState('');
     const [error, setError] = React.useState('');
-    const navigate = useNavigate();
+    const [registered, setRegistered] = React.useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
+
         e.preventDefault();
         if (password !== confirmPassword) {
             setError('Passwords do not match');
@@ -21,7 +24,7 @@ function Register() {
         try {
             await register(email, password);
             setError('');
-            navigate('/', { replace: true });
+            setRegistered(true);
         } catch (err: any) {
             setError(err.message || 'Registration failed');
         }
@@ -52,6 +55,7 @@ function Register() {
                 <p className={styles.registerLink}>
                     Already have an account? <Link to="/login">Login here</Link>
                 </p>
+                {registered && <EmailVerificationNotice />}
             </div>
         </div>
     );

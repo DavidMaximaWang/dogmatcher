@@ -1,10 +1,10 @@
 // src/contexts/AuthContext.tsx
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { Query, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/config'; // your Firebase config
-import { useQueryClient, Query } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 
 interface AuthContextType {
     user: User | null;
@@ -42,19 +42,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         await signInWithEmailAndPassword(auth, email, password);
-        // setUser is auto-handled by onAuthStateChanged
     };
 
     const register = async (email: string, password: string) => {
         await createUserWithEmailAndPassword(auth, email, password);
-      };
+    };
 
     const logout = async () => {
         await signOut(auth);
         setUser(null); // optional: immediate update
     };
 
-    return <AuthContext.Provider value={{ user, login, register,logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ user, login, register, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
