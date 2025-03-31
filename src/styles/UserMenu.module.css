@@ -1,0 +1,33 @@
+.menuWrapper {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+  }
+
+  .menuButton {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 8px 12px;
+  }
+
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 999;
+    min-width: 120px;
+  }
+
+  .logoutButton {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }

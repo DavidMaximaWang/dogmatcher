@@ -8,9 +8,11 @@ import About from './pages/About';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AdminDashboard from './components/AdminDashboard';
+import ProfilePage from './components/ProfilePage';
 
 function App() {
-    const { user } = useAuth();
+    const { user, isAdmin } = useAuth();
 
     return (
         <DogsContextProvider>
@@ -22,6 +24,8 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/dogs/:id" element={<DogDetailsPage />} />
+                        <Route path="/profile/:uid" element={<ProfilePage />} />
+                        {(isAdmin) && <Route path="/admin" element={<AdminDashboard />} />}
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Route>
                 ) : (

@@ -12,7 +12,8 @@ function SearchResults() {
     const {total, setTotal, setSearchResultLoadedCallback} = useDogContext();
     const [searchParams] = useSearchParams();
     const dogsQuery = useMemo(() => buildDogSearchQuery(searchParams), [searchParams]);
-    const { id: dogId } = useParams<{ id: string }>();
+    const { id: dogId, uid } = useParams<{ id: string, uid: string }>();
+
     const inDogDetailsPage = dogId;
 
     const {
@@ -22,7 +23,7 @@ function SearchResults() {
         hasNextPage,
         fetchNextPage,
         isFetchingNextPage
-    } = useDogsInfiniteQuery(dogsQuery);
+    } = useDogsInfiniteQuery(dogsQuery, uid);
 
       const setTotalValue = useCallback((value: number | undefined) => setTotal(value), [setTotal]);
 

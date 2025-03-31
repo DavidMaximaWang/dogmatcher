@@ -1,4 +1,4 @@
-import { useInfiniteQuery, UseQueryResult, useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import DogService from '../services/dog';
 import { Dog, Location, Match } from '../types';
@@ -19,7 +19,7 @@ export interface DogResult {
     prev?: string;
 }
 
-export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMax, ageMin }: SearchDogsParams) => {
+export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMax, ageMin }: SearchDogsParams, uid?: string) => {
     const fetchDogs = useCallback(
         async ({ pageParam = 0 }: { pageParam: number }) => {
             try {
@@ -32,7 +32,7 @@ export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMa
                     zipCodes,
                     ageMax,
                     ageMin
-                });
+                }, uid);
                 return result;
             } catch (error) {
                 if (process.env.NODE_ENV === 'development') {
@@ -41,7 +41,7 @@ export const useDogsInfiniteQuery = ({ from, size, sort, breeds, zipCodes, ageMa
                 throw error;
             }
         },
-        [size, sort, breeds, zipCodes, ageMax, ageMin]
+        [size, sort, breeds, zipCodes, ageMax, ageMin, uid]
     );
     const queryKey = useMemo(() => ['dogs', size, sort, breeds, zipCodes, ageMin, ageMax], [size, sort, breeds, zipCodes, ageMin, ageMax]);
     return useInfiniteQuery({

@@ -1,9 +1,10 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Layout.module.css';
+import UserMenu from './UserMenu';
 
 const Layout = () => {
-    const { logout } = useAuth();
+    const { isAdmin } = useAuth();
 
     return (
         <div className={styles.container}>
@@ -26,10 +27,18 @@ const Layout = () => {
                     >
                         About
                     </NavLink>
+                    {(isAdmin) && (
+                        <NavLink
+                            to="/admin"
+                            className={({ isActive }) =>
+                                `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
+                            }
+                        >
+                            Admin
+                        </NavLink>
+                    )}
                 </nav>
-                <button onClick={logout} className={styles.logoutButton}>
-                    Logout
-                </button>
+                <UserMenu />
             </header>
             <main className={styles.mainContent}>
                 <Outlet />

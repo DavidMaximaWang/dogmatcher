@@ -1,4 +1,4 @@
-import { collection, documentId, getDocs, query, where } from 'firebase/firestore';
+import { collection, documentId, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { DogResult, SearchDogsParams } from '../hooks/useDogQueries';
 import { Dog, Location, Match } from '../types';
@@ -19,11 +19,44 @@ class DogService {
         if (!this.hasLoaded) {
             const snapshot = await getDocs(collection(db, 'dogs'));
             this.allDogs = snapshot.docs.map((doc) => doc.data() as Dog);
+            console.log(this.allDogs);
             this.hasLoaded = true;
         }
     }
+    private dogsForOwner = new Map<string, any>();
 
-    public async getAllDogs(): Promise<Dog[]> {
+    private async getDocsWithOwner(owner_id: string) {
+        if (!this.dogsForOwner.get(owner_id)) {
+            const q = query(collection(db, 'dogs'), where('owner_id', '==', owner_id));
+            const snapshot = await getDocs(q);
+
+            const dogs = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            })).slice(0, 4);
+            this.dogsForOwner.set(owner_id, dogs)
+            return dogs;
+        }
+        return this.dogsForOwner.get(owner_id)
+    }
+
+    public subscribeToDogs(callback?: () => void) {
+        const dogsRef = collection(db, 'dogs');
+
+        onSnapshot(dogsRef, (snapshot) => {
+            this.allDogs = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Dog[];
+            if (callback) callback();
+        });
+    }
+
+    public async getAllDogs(uid?: string): Promise<Dog[]> {
+        if (uid) {
+              await this.getDocsWithOwner(uid)
+              return this.dogsForOwner.get(uid)
+        }
         await this.loadDogsIfNeeded();
         return this.allDogs;
     }
@@ -37,8 +70,8 @@ class DogService {
         return Array.from(breedsSet);
     }
 
-    public async searchDogs(params: SearchDogsParams): Promise<DogResult> {
-        let dogs = await this.getAllDogs();
+    public async searchDogs(params: SearchDogsParams, uid?: string): Promise<DogResult> {
+        let dogs = await this.getAllDogs(uid);
 
         // Filter
         if (params.breeds?.length) {
