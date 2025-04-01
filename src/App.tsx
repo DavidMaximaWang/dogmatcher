@@ -1,27 +1,32 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
+import AdminDashboard from './components/AdminDashboard';
 import DogDetailsPage from './components/DogDetailsPage';
 import Layout from './components/Layout';
+import ProfilePage from './components/ProfilePage';
+import UnAuthenticated from './components/UnAuthenticated';
+import UnauthenticatedWithModal from './components/UnauthenticatedWithModal';
 import { useAuth } from './context/AuthContext';
 import DogsContextProvider from './context/DogsContextProvider';
 import About from './pages/About';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import AdminDashboard from './components/AdminDashboard';
-import ProfilePage from './components/ProfilePage';
-import UnAuthenticated from './components/UnAuthenticated';
 
 function App() {
-    const { user, isAdmin } = useAuth();
+    const location = useLocation();
+    const state = location.state as { backgroundLocation?: Location };
+    const background = state?.backgroundLocation;
+    const { user, isAdmin, loading } = useAuth();
 
+    if (loading) {
+        return <div>Loading...</div>
+    }
     return (
         <DogsContextProvider>
-            <Routes>
-            <Route element={<Layout />}>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/default" element={<UnAuthenticated />} />
+            <Routes location={background || location}>
+                <Route element={<Layout />}>
+                    <Route path="/default" element={user ? <Navigate to="/" replace /> : <UnAuthenticated />} />
+                    <Route path="/login" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
+                    <Route path="/register" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
                 </Route>
                 {user ? (
                     <Route element={<Layout />}>
@@ -36,8 +41,15 @@ function App() {
                     <Route path="*" element={<Navigate to="/default" replace />} />
                 )}
             </Routes>
+            {(location.pathname === "/login" || location.pathname === "/register") && (
+                <Routes>
+                    <Route path="/login" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
+                    <Route path="/register" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />}  />
+                </Routes>
+            )}
         </DogsContextProvider>
     );
 }
 
 export default App;
+

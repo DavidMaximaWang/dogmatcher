@@ -18,7 +18,7 @@
   .pos0 { top: 10%; left: 10%; }
   .pos1 { top: 25%; left: 70%; }
   .pos2 { top: 60%; left: 20%; }
-  .pos3 { top: 50%; left: 50%; }
+  .pos3 { top: 50%; left: 50%; z-index: 1; }
   .pos4 { top: 60%; left: 80%; }
   .pos5 { top: 15%; left: 40%; }
 

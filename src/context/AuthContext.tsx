@@ -19,6 +19,7 @@ interface AuthContextType {
     register: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     isAdmin: boolean;
+    loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +28,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<UserWithRole | null>(null);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        setUser(firebaseUser);
+        setLoading(false);
+    });
+
+    return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -73,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const isAdmin = user?.role === 'admin';
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, isAdmin }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin }}>
             {children}
         </AuthContext.Provider>
     );
