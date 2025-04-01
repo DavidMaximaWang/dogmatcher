@@ -1,34 +1,40 @@
 import { collection, doc, writeBatch } from 'firebase/firestore';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase/config';
-import styles from '../styles/AdminDashboard.module.css';
+import styles from '../styles/Uploader.module.css';
 import { Dog } from '../types';
 
 import UploadService from '../services/upload';
 import { useDogContext } from '../context/DogsContext';
+import DropZone from './DropZone';
+import PreviewGallery from './PreviewGallery';
+import { MAX_FILES } from '../config/constants';
 
-const AdminDashboard = () => {
+
+const Uploader = () => {
     const authResult = useAuth();
     const { setTotal } = useDogContext();
 
-    const { isAdmin } = authResult;
+    // const { isAdmin } = authResult;
     const [files, setFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    if (!isAdmin) {
-        return <div>Access denied. Admin privileges required.</div>;
-    }
+    // if (!isAdmin) {
+    //     return <div>Access denied. Admin privileges required.</div>;
+    // }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            setFiles(Array.from(e.target.files));
-            setError(null);
+          const selectedFiles = Array.from(e.target.files);
+          setFiles((prev) => [...prev, ...selectedFiles].slice(0, MAX_FILES));
         }
-    };
-
+      };
+      const  handleDrop = useCallback((acceptedFiles: File[]) => {
+        setFiles((prev) => [...prev, ...acceptedFiles].slice(0, MAX_FILES));
+        }, []);
     async function uploadDogsInFirebase(dogs: Omit<Dog, 'id'>[]) {
         const batch = writeBatch(db);
         const dogsCollection = collection(db, 'dogs');
@@ -79,23 +85,22 @@ const AdminDashboard = () => {
         }
     };
 
+
+
     return (
         <div className={styles.container}>
-            <h2>Admin Dashboard</h2>
+            <h2> Upload dog image to detect breed(up to {MAX_FILES})</h2>
             <div className={styles.uploadSection}>
-                <h3>Upload New Dog Photo</h3>
-                <div className={styles.fileInput}>
-                    <input type="file" accept="image/*" multiple onChange={handleFileChange} disabled={uploading} />
-                    {files.length > 0 && <p>{files.length} file(s) selected</p>}
-                </div>
+                <DropZone handleFileChange={handleFileChange} handleDrop={handleDrop} isDisabled={files.length >= MAX_FILES}/>
                 <button onClick={handleUpload} disabled={!files.length || uploading} className={styles.uploadButton}>
                     {uploading ? 'Uploading...' : 'Upload'}
                 </button>
                 {error && <p className={styles.error}>{error}</p>}
                 {success && <p className={styles.success}>Upload successful!</p>}
             </div>
+            <PreviewGallery files={files} />
         </div>
     );
 };
 
-export default AdminDashboard;
+export default Uploader;

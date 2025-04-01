@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
-import AdminDashboard from './components/AdminDashboard';
+import Uploader from './components/Uploader';
 import DogDetailsPage from './components/DogDetailsPage';
 import Layout from './components/Layout';
 import ProfilePage from './components/ProfilePage';
@@ -15,7 +15,7 @@ function App() {
     const location = useLocation();
     const state = location.state as { backgroundLocation?: Location };
     const background = state?.backgroundLocation;
-    const { user, isAdmin, loading } = useAuth();
+    const { user, loading } = useAuth();
 
     if (loading) {
         return <div>Loading...</div>
@@ -34,7 +34,7 @@ function App() {
                         <Route path="/about" element={<About />} />
                         <Route path="/dogs/:id" element={<DogDetailsPage />} />
                         <Route path="/profile/:uid" element={<ProfilePage />} />
-                        {(isAdmin) && <Route path="/admin" element={<AdminDashboard />} />}
+                        <Route path="/admin" element={<Uploader />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Route>
                 ) : (

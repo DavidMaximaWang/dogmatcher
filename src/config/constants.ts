@@ -22,3 +22,6 @@ export const API_CONFIG = {
         DOG_MATCH: '/dogs/match'
     }
 } as const;
+
+
+export const MAX_FILES = 10;
