@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './components/AdminDashboard';
 import ProfilePage from './components/ProfilePage';
+import UnAuthenticated from './components/UnAuthenticated';
 
 function App() {
     const { user, isAdmin } = useAuth();
@@ -17,8 +18,11 @@ function App() {
     return (
         <DogsContextProvider>
             <Routes>
+            <Route element={<Layout />}>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/default" element={<UnAuthenticated />} />
+                </Route>
                 {user ? (
                     <Route element={<Layout />}>
                         <Route path="/" element={<Home />} />
@@ -29,7 +33,7 @@ function App() {
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Route>
                 ) : (
-                    <Route path="*" element={<Navigate to="/login" replace />} />
+                    <Route path="*" element={<Navigate to="/default" replace />} />
                 )}
             </Routes>
         </DogsContextProvider>

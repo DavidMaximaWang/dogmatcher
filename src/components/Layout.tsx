@@ -4,29 +4,29 @@ import styles from '../styles/Layout.module.css';
 import UserMenu from './UserMenu';
 
 const Layout = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, user } = useAuth();
 
     return (
         <div className={styles.container}>
             <header className={styles.header}>
                 <h2>Find your perfect dog</h2>
                 <nav className={styles.nav}>
-                    <NavLink
+                    {user ? <NavLink
                         to="/"
                         className={({ isActive }) =>
                             `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
                         }
                     >
                         Home
-                    </NavLink>
-                    <NavLink
+                    </NavLink> : null}
+                    {user ? <NavLink
                         to="/about"
                         className={({ isActive }) =>
                             `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
                         }
                     >
                         About
-                    </NavLink>
+                    </NavLink> : null}
                     {(isAdmin) && (
                         <NavLink
                             to="/admin"
