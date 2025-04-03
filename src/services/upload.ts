@@ -1,6 +1,7 @@
-import { createAxiosWithAuth } from './axios';
+import { deleteImageByToken, createAxiosWithAuth } from './axios';
 import { axiosCloudinaryInstance } from './axios';
 import { Dog } from '../types';
+import { getRandomName } from '../utils';
 
 class UploadService {
     private static instance: UploadService;
@@ -35,14 +36,30 @@ class UploadService {
         return result;
     };
 
+    private  deleteImageFromCloudinary = async (delete_token: string) =>{
+        try {
+            const res = await deleteImageByToken(delete_token);
+            return res;
+        } catch (err: any) {
+            console.error('Error deleting image:', err.response?.data || err.message);
+            throw err;
+        }
+      }
+    //temp public
+    public batchDeleteImageFromCloudinary = async (cloudinaryUrls: { url: string; public_id: string, delete_token: string }[]) => {
+        for (const { delete_token } of cloudinaryUrls) {
+            await this.deleteImageFromCloudinary(delete_token);
+        }
+    };
+
     private uploadToCloudinary = async (file: File): Promise<{ url: string; public_id: string }> => {
 
         try {
-            const data = new FormData();
-            data.append('file', file);
-            data.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+            // formData.append('return_delete_token', 'true');
             // data.append('public_id',); // optional
-            const formData = data;
 
             const response = await axiosCloudinaryInstance.post('/image/upload', formData);
 
@@ -58,28 +75,38 @@ class UploadService {
     public uploadAll = async (files: File[]) => {
         const breedDetectionPromise = this.uploadMultipleBreedDetection(files);
         const cloudinaryPromises = this.batchUploadToCloudinary(files);
+        try {
+            const [breedPredictions, cloudinaryUrls] = await Promise.all([breedDetectionPromise, cloudinaryPromises]);
+            if (breedPredictions.predictions.length !== cloudinaryUrls.length) {
+                //    await this.batchDeleteImageFromCloudinary(cloudinaryUrls);
+                throw new Error("Won't handle it");
+            }
+            return {
+                predictions: breedPredictions,
+                imageUrls: cloudinaryUrls
+            };
+        } catch (e) {
+            console.error(e);
+        }
 
-        const [breedPredictions, cloudinaryUrls] = await Promise.all([breedDetectionPromise, cloudinaryPromises]);
-
-        return {
-            predictions: breedPredictions,
-            imageUrls: cloudinaryUrls
-        };
     };
 
-    public convertApiResponseToDogs =  (response: any): Omit<Dog, 'id'>[] => {
+    public convertApiResponseToDogs =  (response: {predictions: any, imageUrls: {
+        url: string;
+        public_id: string;
+    }[]}): Omit<Dog, 'id'>[] => {
         const { predictions, imageUrls } = response;
 
         const dogDataArray: Omit<Dog, 'id'>[] = predictions.predictions.map((predictionGroup: [string, number][], index: number) => {
           const topBreed = predictionGroup[0][0]; // Top-1 prediction
           const confidence = predictionGroup[0][1]; // Top-1 prediction
           const img = imageUrls[index]?.url || '';
-          const name = imageUrls[index]?.public_id || ''
+          const name = getRandomName();
 
           return {
             name,
             age: Math.floor(Math.random() * 15) + 1,
-            breed: topBreed.replace(/_/g, ' '), // optional formatting
+            breed: topBreed,
             zip_code: (Math.floor(Math.random() * 90000) + 10000).toString(),
             img,
             confidence,

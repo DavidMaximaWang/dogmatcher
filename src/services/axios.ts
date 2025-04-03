@@ -44,5 +44,21 @@ const axiosCloudinaryInstance = axios.create({
         "Content-Type": "multipart/form-data",
       },
 });
-export { axiosUploadInstance, axiosCloudinaryInstance };
+
+const deleteImageByToken = async (deleteToken: string) => {
+    const res = await axiosCloudinaryInstance.post(
+      '/delete_by_token',
+      new URLSearchParams({ token: deleteToken }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
+
+    return res.data;
+  };
+
+
+export { axiosUploadInstance, axiosCloudinaryInstance, deleteImageByToken };
 export default axiosInstance;

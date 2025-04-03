@@ -10,6 +10,7 @@ import { useAuth } from './context/AuthContext';
 import DogsContextProvider from './context/DogsContextProvider';
 import About from './pages/About';
 import Home from './pages/Home';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
     const location = useLocation();
@@ -21,6 +22,8 @@ function App() {
         return <div>Loading...</div>
     }
     return (
+        <>
+        <Toaster position="top-right" />
         <DogsContextProvider>
             <Routes location={background || location}>
                 <Route element={<Layout />}>
@@ -48,6 +51,7 @@ function App() {
                 </Routes>
             )}
         </DogsContextProvider>
+        </>
     );
 }
 

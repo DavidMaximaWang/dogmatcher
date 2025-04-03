@@ -1,9 +1,8 @@
-import React from "react";
-
 type PreviewGalleryProps = {
   files: File[];
 };
 export default function PreviewGallery({ files }: PreviewGalleryProps) {
+
     return (
       <div
         style={{

@@ -1,55 +1,50 @@
 import { collection, doc, writeBatch } from 'firebase/firestore';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase/config';
 import styles from '../styles/Uploader.module.css';
 import { Dog } from '../types';
 
-import UploadService from '../services/upload';
-import { useDogContext } from '../context/DogsContext';
-import DropZone from './DropZone';
-import PreviewGallery from './PreviewGallery';
+import toast from 'react-hot-toast';
 import { MAX_FILES } from '../config/constants';
+import { useDogContext } from '../context/DogsContext';
+import UploadService from '../services/upload';
+import DropZone from './DropZone';
+import EditPanel from './EditPanel';
+import PreviewGallery from './PreviewGallery';
 
 
 const Uploader = () => {
     const authResult = useAuth();
     const { setTotal } = useDogContext();
+    const [uploadedDogs, setUploadedDogs] = useState<Dog[]>([]);
 
     // const { isAdmin } = authResult;
     const [files, setFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
 
     // if (!isAdmin) {
     //     return <div>Access denied. Admin privileges required.</div>;
     // }
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-          const selectedFiles = Array.from(e.target.files);
-          setFiles((prev) => [...prev, ...selectedFiles].slice(0, MAX_FILES));
-        }
-      };
-      const  handleDrop = useCallback((acceptedFiles: File[]) => {
-        setFiles((prev) => [...prev, ...acceptedFiles].slice(0, MAX_FILES));
-        }, []);
     async function uploadDogsInFirebase(dogs: Omit<Dog, 'id'>[]) {
         const batch = writeBatch(db);
         const dogsCollection = collection(db, 'dogs');
 
-        dogs.forEach((dog) => {
+         const dogsTemp = dogs.map((dog) => {
             const docRef = doc(dogsCollection);
             console.log('added dog', docRef.id);
-            batch.set(docRef, {
+            const dogTemp = {
                 ...dog,
                 id: docRef.id,
                 owner_id: authResult.user?.uid
-            });
+            }
+            batch.set(docRef, dogTemp);
+            return dogTemp
         });
 
         await batch.commit();
+        setUploadedDogs(dogsTemp);
         setTotal((prev) => (prev || 0) + dogs.length);
         console.log(`✅ Uploaded ${dogs.length} dogs`);
     }
@@ -59,29 +54,33 @@ const Uploader = () => {
             return;
         }
         if (files.length === 0) {
-            setError('Please select image(s) to upload');
+            toast.error('Please select image(s) to upload');
             return;
         }
 
         if (!files.every((file) => file.type.startsWith('image/'))) {
-            setError('All files must be images');
+            toast.error('All files must be images');
             return;
         }
 
         setUploading(true);
-        setError(null);
-        setSuccess(false);
 
         try {
             const result = await UploadService.uploadAll(files);
-            console.log('result', result);
-            const dogsData = UploadService.convertApiResponseToDogs(result);
-            await uploadDogsInFirebase(dogsData);
-            setSuccess(true);
+
+            if (result) {
+                const dogsData = UploadService.convertApiResponseToDogs(result);
+                await uploadDogsInFirebase(dogsData);
+            } else {
+                throw new Error('Some errors happened')
+            }
+            toast.success('Upload successful! 🎉');
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to upload image');
+            console.error(err instanceof Error ? err.message : 'Failed to upload image');
+            toast.error('Failed to upload image')
         } finally {
             setUploading(false);
+            setFiles([]);
         }
     };
 
@@ -91,13 +90,12 @@ const Uploader = () => {
         <div className={styles.container}>
             <h2> Upload dog image to detect breed(up to {MAX_FILES})</h2>
             <div className={styles.uploadSection}>
-                <DropZone handleFileChange={handleFileChange} handleDrop={handleDrop} isDisabled={files.length >= MAX_FILES}/>
+                <DropZone setFiles={setFiles} isDisabled={files.length >= MAX_FILES}/>
                 <button onClick={handleUpload} disabled={!files.length || uploading} className={styles.uploadButton}>
                     {uploading ? 'Uploading...' : 'Upload'}
                 </button>
-                {error && <p className={styles.error}>{error}</p>}
-                {success && <p className={styles.success}>Upload successful!</p>}
             </div>
+            <EditPanel dogs={uploadedDogs} setDogs={setUploadedDogs}/>
             <PreviewGallery files={files} />
         </div>
     );
