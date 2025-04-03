@@ -15,8 +15,8 @@ export default function Modal({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <div className="modal-backdrop" onClick={handleClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-backdrop" onMouseDown={handleClose}>
+            <div className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
                 {children}
             </div>
         </div>
