@@ -31,11 +31,11 @@ function App() {
                     <Route path="/default" element={user ? <Navigate to="/" replace /> : <UnAuthenticated />} />
                     <Route path="/login" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
                     <Route path="/register" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
+                    <Route path="/screens" element={<About />} />
                 </Route>
                 {user ? (
                     <Route element={<Layout />}>
                         <Route path="/" element={<Home />} />
-                        <Route path="/about" element={<About />} />
                         <Route path="/dogs/:id" element={<DogDetailsPage />} />
                         <Route path="/profile/:uid" element={<ProfilePage />} />
                         <Route path="/uploader" element={<Uploader />} />
