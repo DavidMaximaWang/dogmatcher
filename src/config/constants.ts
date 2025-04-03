@@ -24,4 +24,4 @@ export const API_CONFIG = {
 } as const;
 
 
-export const MAX_FILES = 10;
+export const MAX_FILES = 2;

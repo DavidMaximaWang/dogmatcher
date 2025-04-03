@@ -28,14 +28,14 @@ const Layout = () => {
                         About
                     </NavLink> : null}
 
-                    <NavLink
+                    {user ? <NavLink
                         to="/admin"
                         className={({ isActive }) =>
                             `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
                         }
                     >
                         Identify Breeds
-                    </NavLink>
+                    </NavLink> : null}
 
                 </nav>
                 <UserMenu />
