@@ -11,6 +11,7 @@ import DogsContextProvider from './context/DogsContextProvider';
 import About from './pages/About';
 import Home from './pages/Home';
 import { Toaster } from 'react-hot-toast';
+import AdminBoard from './components/AdminBoard';
 
 function App() {
     const location = useLocation();
@@ -37,7 +38,8 @@ function App() {
                         <Route path="/about" element={<About />} />
                         <Route path="/dogs/:id" element={<DogDetailsPage />} />
                         <Route path="/profile/:uid" element={<ProfilePage />} />
-                        <Route path="/admin" element={<Uploader />} />
+                        <Route path="/uploader" element={<Uploader />} />
+                        <Route path="/admin" element={<AdminBoard />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Route>
                 ) : (

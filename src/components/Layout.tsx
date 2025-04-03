@@ -4,7 +4,7 @@ import styles from '../styles/Layout.module.css';
 import UserMenu from './UserMenu';
 
 const Layout = () => {
-    const { user } = useAuth();
+    const { user, userData } = useAuth();
 
     return (
         <div className={styles.container}>
@@ -29,12 +29,20 @@ const Layout = () => {
                     </NavLink> : null}
 
                     {user ? <NavLink
-                        to="/admin"
+                        to="/uploader"
                         className={({ isActive }) =>
                             `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
                         }
                     >
                         Identify Breeds
+                    </NavLink> : null}
+                    {(userData?.role === 'admin') ? <NavLink
+                        to="/admin"
+                        className={({ isActive }) =>
+                            `${styles.navLink} ${isActive ? styles.activeNavLink : ''}`
+                        }
+                    >
+                        Admin Board
                     </NavLink> : null}
 
                 </nav>

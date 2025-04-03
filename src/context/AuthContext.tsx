@@ -5,30 +5,31 @@ import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndP
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/config';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, DocumentData, getDoc, setDoc } from 'firebase/firestore';
 
 export type UserRole = 'admin' | 'user';
 
-interface UserWithRole extends User {
-    role?: UserRole;
-}
+// interface UserWithRole extends User {
+//     role?: UserRole;
+// }
 
 interface AuthContextType {
-    user: UserWithRole | null;
+    user: User | null;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    isAdmin: boolean;
     loading: boolean;
+    userData: DocumentData | undefined;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<UserWithRole | null>(null);
     const navigate = useNavigate();
+    const [user, setUser] = useState<User| null>(null);
     const queryClient = useQueryClient();
     const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState<DocumentData | undefined>(undefined)
 
     useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -45,10 +46,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 // Get user role from Firestore
                 const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
                 const userData = userDoc.data();
-                setUser({ ...firebaseUser, role: userData?.role || 'user' });
-            } else {
-                setUser(null);
-            }
+                setUserData(userData)
+                // setUser({ ...firebaseUser, role: userData?.role || 'user' });
+            } /* else {
+                // setUser(null);
+            } */
         });
         return () => unsubscribe();
     }, []);
@@ -73,18 +75,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const register = async (email: string, password: string) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         // Set default role as 'user' in Firestore
-        await setDoc(doc(db, 'users', userCredential.user.uid), { role: 'user' });
+        await setDoc(doc(db, 'users', userCredential.user.uid), { role: 'user', email });
     };
 
     const logout = async () => {
         await signOut(auth);
-        setUser(null);
+        // setUser(null);
     };
 
-    const isAdmin = user?.role === 'admin';
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, userData }}>
             {children}
         </AuthContext.Provider>
     );
