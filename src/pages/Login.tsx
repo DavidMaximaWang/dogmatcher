@@ -29,7 +29,7 @@ function Login() {
             setError('');
             navigate('/', { replace: true });
         } catch (err: any) {
-            setError(err.message || 'Login failed');
+            setError('Login failed, invalid email or password');
         }
     };
 
