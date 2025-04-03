@@ -7,8 +7,10 @@ export default function Modal({ children }: { children: React.ReactNode }) {
     const backgroundLocation = location.state?.backgroundLocation;
     const pathname = location.pathname;
     const handleClose = () => {
-        if (backgroundLocation || (pathname === '/login' || pathname === '/register')) {
-            navigate('/default', {replace: true});
+        if (backgroundLocation) {
+            navigate(backgroundLocation?.pathname, { replace: true });
+        } else if (pathname === '/login' || pathname === '/register') {
+            navigate('/default', { replace: true });
         } else {
             navigate(-1);
         }
