@@ -1,17 +1,17 @@
+import { Toaster } from 'react-hot-toast';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
-import Uploader from './components/Uploader';
+import AdminBoard from './components/AdminBoard';
 import DogDetailsPage from './components/DogDetailsPage';
 import Layout from './components/Layout';
 import ProfilePage from './components/ProfilePage';
 import UnAuthenticated from './components/UnAuthenticated';
 import UnauthenticatedWithModal from './components/UnauthenticatedWithModal';
+import Uploader from './components/Uploader';
 import { useAuth } from './context/AuthContext';
 import DogsContextProvider from './context/DogsContextProvider';
 import About from './pages/About';
 import Home from './pages/Home';
-import { Toaster } from 'react-hot-toast';
-import AdminBoard from './components/AdminBoard';
 
 function App() {
     const location = useLocation();

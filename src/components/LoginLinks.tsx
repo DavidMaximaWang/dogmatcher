@@ -1,9 +1,11 @@
 import { useLocation } from 'react-router-dom';
 import styles from '../styles/UnAuthenticated.module.css';
 import ReplaceLink from './ReplaceLink';
+import GoogleLoginButton from './GoogleLoginButton';
 
 function LoginLinks() {
     const location = useLocation();
+
     return (
         <p className={styles.loginTop}>
             To see more{' '}
@@ -14,6 +16,7 @@ function LoginLinks() {
             <ReplaceLink to="/register" state={{ backgroundLocation: location }}>
                 Register
             </ReplaceLink>
+            <GoogleLoginButton/>
         </p>
     );
 }

@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Layout.module.css';
 import UserMenu from './UserMenu';
 
+// const hasPasswordProvider = () => auth.currentUser?.providerData.some((provider) => provider.providerId === 'password');
+
 const Layout = () => {
     const { user, userData } = useAuth();
     const navigate = useNavigate();
@@ -13,6 +15,11 @@ const Layout = () => {
             navigate('/(unauthenticated)');
         }
     };
+
+    // if (user && !hasPasswordProvider()) {
+    //     return <Navigate to="/set-password" />;
+    // }
+
     return (
         <div className={styles.container}>
             <header className={styles.header}>

@@ -4,6 +4,7 @@ import styles from '../styles/Login.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/config';
 import EmailVerificationNotice from '../components/EmailVerificationNotice';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 function Login() {
     const { login } = useAuth();
@@ -54,7 +55,7 @@ function Login() {
                     {!isVerified && <EmailVerificationNotice />}
                 </form>
                 <p className={styles.registerLink}>
-                    Don’t have an account? <Link to="/register">Register here</Link>
+                    Don’t have an account? <Link to="/register">Register here</Link><GoogleLoginButton/>
                 </p>
             </div>
         </div>
