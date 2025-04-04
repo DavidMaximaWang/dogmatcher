@@ -5,19 +5,16 @@ const About = () => {
     const {user} = useAuth();
     return (
         <div>
-           { !user ? <LoginLinks /> : null}
-            <p style={!user ? { marginTop: '3.2rem' } : {}}>
+            {!user ? <LoginLinks /> : null}
+            <p style={!user ? { marginTop: '4rem' } : {}}>
                 Thank you for visiting! Check out more of my projects on: &nbsp;
                 <a href="https://github.com/davidmaximawang" target="_blank" rel="noopener noreferrer">
                     GitHub
                 </a>
-            </p>
-            <p>
-                {' '}
-                email: qunlingw@gmail.com
-                {/* <a href="https://github.com/DavidMaximaWang/fetch-react" target="_blank" rel="noopener noreferrer">
-                    Fetch React Project(private, email: qunlingw@gmail.com)
-                </a> */}
+                &nbsp; Code for this &nbsp;
+                <a href="https://github.com/DavidMaximaWang/dogmatcher" target="_blank" rel="noopener noreferrer">
+                    Project
+                </a>
             </p>
             <p>
                 <img style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }} src="http://res.cloudinary.com/dcmo3iprb/image/upload/v1743706355/unsigned_dog_uploads/dog1_p8lgzn.jpg" alt="screens" />
