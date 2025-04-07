@@ -1,6 +1,6 @@
 import data from '../../assets/staticdogs.json';
 import styles from '../styles/UnAuthenticated.module.css';
-import DogCard from './DogCard';
+import DogDisplayCard from './DogDisplayCard';
 import LoginLinks from './LoginLinks';
 
 function UnAuthenticated() {
@@ -10,7 +10,7 @@ function UnAuthenticated() {
             <LoginLinks/>
             {data.map((d, index) => (
                 <div className={`${styles.scatterItem} ${styles[`pos${index}`]}`} key={d.id}>
-                    <DogCard dog={d} />
+                    <DogDisplayCard dog={d} />
                 </div>
             ))}
         </div>

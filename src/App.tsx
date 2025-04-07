@@ -13,6 +13,19 @@ import DogsContextProvider from './context/DogsContextProvider';
 import About from './pages/About';
 import Home from './pages/Home';
 
+function AuthenticatedRoutes() {
+    return (
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/dogs/:id" element={<DogDetailsPage />} />
+            <Route path="/profile/:uid" element={<ProfilePage />} />
+            <Route path="/uploader" element={<Uploader />} />
+            <Route path="/admin" element={<AdminBoard />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+    );
+}
+
 function App() {
     const location = useLocation();
     const state = location.state as { backgroundLocation?: Location };
@@ -24,8 +37,7 @@ function App() {
     }
     return (
         <>
-        <Toaster position="top-right" />
-        <DogsContextProvider>
+            <Toaster position="top-right" />
             <Routes location={background || location}>
                 <Route element={<Layout />}>
                     <Route path="/default" element={user ? <Navigate to="/" replace /> : <UnAuthenticated />} />
@@ -33,26 +45,19 @@ function App() {
                     <Route path="/register" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
                     <Route path="/screens" element={<About />} />
                 </Route>
-                {user ? (
+                {user && (
                     <Route element={<Layout />}>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/dogs/:id" element={<DogDetailsPage />} />
-                        <Route path="/profile/:uid" element={<ProfilePage />} />
-                        <Route path="/uploader" element={<Uploader />} />
-                        <Route path="/admin" element={<AdminBoard />} />
-                        <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route path="*" element={ <DogsContextProvider> <AuthenticatedRoutes /> </DogsContextProvider> } />
                     </Route>
-                ) : (
-                    <Route path="*" element={<Navigate to="/default" replace />} />
                 )}
+                <Route path="*" element={<Navigate to="/default" replace />} />
             </Routes>
-            {(location.pathname === "/login" || location.pathname === "/register") && (
+            {background && (
                 <Routes>
                     <Route path="/login" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
-                    <Route path="/register" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />}  />
+                    <Route path="/register" element={user ? <Navigate to="/" replace /> : <UnauthenticatedWithModal />} />
                 </Routes>
             )}
-        </DogsContextProvider>
         </>
     );
 }
